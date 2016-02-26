@@ -1,30 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnew.c                                        :+:      :+:    :+:   */
+/*   ft_strnjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/11/27 14:28:19 by sdjeffal          #+#    #+#             */
-/*   Updated: 2015/12/10 18:49:35 by sdjeffal         ###   ########.fr       */
+/*   Created: 2015/09/21 12:46:36 by sdjeffal          #+#    #+#             */
+/*   Updated: 2016/01/08 11:20:04 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "libft.h"
 
-char	*ft_strnew(size_t size)
+char	*ft_strnjoin(char const *s1, char const *s2, size_t n)
 {
-	char	*s;
+	char	*str;
+	int		nbr;
+	char	*tmp;
 
-	s = (char *)malloc(sizeof(char) * (size + 1));
-	if (s == NULL)
+	if (s1 == NULL && s2 == NULL)
 		return (NULL);
-	while (size != 0)
-	{
-		s[size] = '\0';
-		size--;
-	}
-	s[size] = '\0';
-	return (s);
+	else if (s1 == NULL)
+		return ((char*)ft_strdup(s2));
+	else if (s2 == NULL)
+		return ((char*)ft_strdup(s1));
+	nbr = ft_strlen(s1) + n;
+	str = ft_strnew(nbr);
+	tmp = str;
+	while (*s1)
+		*str++ = *s1++;
+	while (*s2 && n-- > 0)
+		*str++ = *s2++;
+	*str = '\0';	
+	return (str - (str - tmp));
 }

@@ -1,30 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnew.c                                        :+:      :+:    :+:   */
+/*   ft_strclen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/11/27 14:28:19 by sdjeffal          #+#    #+#             */
-/*   Updated: 2015/12/10 18:49:35 by sdjeffal         ###   ########.fr       */
+/*   Created: 2015/09/10 13:40:19 by sdjeffal          #+#    #+#             */
+/*   Updated: 2015/11/30 21:52:58 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "libft.h"
 
-char	*ft_strnew(size_t size)
+size_t	ft_strclen(const char *s, int c)
 {
-	char	*s;
+	size_t i;
 
-	s = (char *)malloc(sizeof(char) * (size + 1));
-	if (s == NULL)
-		return (NULL);
-	while (size != 0)
-	{
-		s[size] = '\0';
-		size--;
-	}
-	s[size] = '\0';
-	return (s);
+	i = 0;
+	if (!s)
+	 return (0);
+	while (s[i] != c)
+		i++;
+	return (i);
 }
