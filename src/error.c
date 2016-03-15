@@ -6,11 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-<<<<<<< HEAD
 /*   Updated: 2016/03/15 12:04:46 by sdjeffal         ###   ########.fr       */
-=======
-/*   Updated: 2016/03/11 18:55:52 by sdjeffal         ###   ########.fr       */
->>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,22 +24,14 @@ void	msgerropt(char c)
 	exit(EXIT_FAILURE);
 }
 
-<<<<<<< HEAD
 void	msgerr(void)
-=======
-void msgerr()
->>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 {
 	perror("ft_ls");
 	strerror(errno);
 	exit(EXIT_FAILURE);
 }
 
-<<<<<<< HEAD
 void	msgnosuch(char *name)
-=======
-void msgnosuch(char *name)
->>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 {
 	ft_putstr_fd("ft_ls: ", 2);
 	ft_putstr_fd(name, 2);

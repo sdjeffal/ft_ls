@@ -43,11 +43,7 @@ $(OPATH)%.o: $(CPATH)%.c
 clean:
 	@echo "Deleting the directory /obj..."
 	make -C libft clean
-<<<<<<< HEAD
 	@rm -rf $(OPATH)
-=======
-	@rm -f $(OBJ)
->>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 	@echo "Deletion complete !"
 
 fclean: clean
