@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -10,22 +11,36 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+=======
+>>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 #include "../inc/ft_ls.h"
 
 t_file	*newfile(char *name)
 {
 	t_file *new;
 
+<<<<<<< HEAD
 	if ((new = (t_file*)malloc(sizeof(t_file))) == NULL)
 		msgerr();
 	else
 	{
 		if (name == NULL)
+=======
+	if((new = (t_file*)malloc(sizeof(t_file))) == NULL)
+		msgerr();
+	else
+	{
+		if(name == NULL)
+>>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 			new->name = NULL;
 		else
 		{
 			new->name = ft_strdup(name);
+<<<<<<< HEAD
 			if (new->name == NULL)
+=======
+			if(new->name == NULL)		
+>>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 				msgerr();
 		}
 		new->next = NULL;
@@ -39,17 +54,26 @@ void	filepushback(t_file **begin, char *name)
 	t_file *tmp;
 
 	tmp = NULL;
+<<<<<<< HEAD
 	if (*begin == NULL)
+=======
+	if(*begin == NULL)
+>>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 		*begin = newfile(name);
 	else
 	{
 		tmp = *begin;
+<<<<<<< HEAD
 		while (tmp->next)
+=======
+		while(tmp->next)
+>>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
 			tmp = tmp->next;
 		tmp->next = newfile(name);
 		tmp->next->prev = tmp;
 	}
 }
+<<<<<<< HEAD
 
 void	insertascii(t_file **lst, char *s)
 {
@@ -83,3 +107,5 @@ void	putlstfile(t_file **begin)
 		tmp = tmp->next;
 	}
 }
+=======
+>>>>>>> fa85dc1c3d6f8bc147dd9369f21f1796cc92b9d2
