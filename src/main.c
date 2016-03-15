@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 18:05:16 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/15 09:18:41 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/15 11:32:24 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ int	isdir(char *filename)
 	DIR	*dir;
 	t_dirent *dp;
 
-	if((dir = opendir(filename)) == NULL)
+	if ((dir = opendir(filename)) == NULL)
 	{
 		msgnosuch(filename);
-		return(0);
+		return (0);
 	}
 	while ((dp = readdir(dir)) > 0)
 	{
-		if(dp->d_name[0] != '.')
+		if (dp->d_name[0] != '.')
 			ft_putendl(dp->d_name);
 	}
 	closedir(dir);
@@ -42,27 +42,25 @@ int	isdir(char *filename)
 void	ls_default(int ac, char **av)
 {
 	DIR *dir;
+	t_file *begin;
 	t_dirent *dp;
 
-	if(ac == 1 || (ac == 2 && !ft_strcmp(av[1], "--")))
+	begin = NULL;
+	if (ac == 1 || (ac == 2 && !ft_strcmp(av[1], "--")))
 	{
-		if((dir = opendir("./")) == NULL)
+		if ((dir = opendir("./")) == NULL)
 		{
 			perror("ft_ls");
 			strerror(errno);
 			exit(EXIT_FAILURE);
 		}
 		while ((dp = readdir(dir)) > 0)
-			if(dp->d_name[0] != '.')
-				ft_putendl(dp->d_name);
+			if (dp->d_name[0] != '.')
+				insertascii(&begin, dp->d_name);
+		putlstfile(&begin);
 		closedir(dir);
 		exit(EXIT_SUCCESS);
 	}
-}
-
-void	filesortascii(t_file **lst)
-{
-
 }
 
 int	main(int argc, char **argv)
@@ -76,12 +74,12 @@ int	main(int argc, char **argv)
 	begin = getfile(argc, argv);
 
 	tmp = begin;
-	/**while(tmp != NULL)
+	while(tmp != NULL)
 	{
 		ft_putendl(tmp->name);
 		tmp = tmp->next;
 	}
-	while(tmp != NULL)
+	/**while(tmp != NULL)
 	{
 		ft_putendl(tmp->name);
 		tmp = tmp->prev;

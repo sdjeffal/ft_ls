@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/11 18:55:52 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/15 12:04:46 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ void	msgerropt(char c)
 	exit(EXIT_FAILURE);
 }
 
-void msgerr()
+void	msgerr(void)
 {
 	perror("ft_ls");
 	strerror(errno);
 	exit(EXIT_FAILURE);
 }
 
-void msgnosuch(char *name)
+void	msgnosuch(char *name)
 {
 	ft_putstr_fd("ft_ls: ", 2);
 	ft_putstr_fd(name, 2);

@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 07:57:31 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/15 07:00:46 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/15 12:01:21 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../inc/ft_ls.h"
 
 static t_opt	*initopt(t_opt *new)
-{	
+{
 	new->a = FALSE;
 	new->l = FALSE;
 	new->rv = FALSE;
@@ -23,7 +23,7 @@ static t_opt	*initopt(t_opt *new)
 	return (new);
 }
 
-static int	isopt(char c, t_opt *opt)
+static int		isopt(char c, t_opt *opt)
 {
 	if (c == 'a')
 		opt->a = TRUE;
@@ -35,25 +35,25 @@ static int	isopt(char c, t_opt *opt)
 		opt->rc = TRUE;
 	else if (c == 't')
 		opt->t = TRUE;
-	else 
+	else
 		msgerropt(c);
 	return (1);
 }
 
-t_opt	getopt(int ac, char **av)
+t_opt			getopt(int ac, char **av)
 {
-	t_opt op;
-	int i;
-	int j;
+	t_opt	op;
+	int		i;
+	int		j;
 
 	i = 0;
 	initopt(&op);
 	while (++i < ac)
 	{
 		j = 0;
-		if ((av[i][0] == '-' && (av[i][1] == '-' || av[i][1] == 0)) 
+		if ((av[i][0] == '-' && (av[i][1] == '-' || av[i][1] == 0))
 				|| av[i][0] != '-')
-			break;
+			break ;
 		else if (av[i][j] == '-' && av[i][j + 1] != '\0')
 		{
 			while (av[i][++j] != '\0')
@@ -76,20 +76,20 @@ static t_file	*parsefile(t_file *lst, int ac, char **av)
 			b = TRUE;
 		else if ((av[i][0] != '-') || (av[i][0] == '-' && b))
 		{
-			filepushback(&lst, av[i]);
+			insertascii(&lst, av[i]);
 			b = TRUE;
 		}
 	}
-	if(!lst)
-		filepushback(&lst, "./");
+	if (!lst)
+		insertascii(&lst, "./");
 	return (lst);
 }
 
-t_file	*getfile(int ac, char **av)
+t_file			*getfile(int ac, char **av)
 {
 	t_file	*begin;
-	
+
 	begin = NULL;
 	begin = parsefile(begin, ac, av);
-	return (begin);	
+	return (begin);
 }

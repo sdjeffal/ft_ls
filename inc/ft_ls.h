@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 17:57:44 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/11 19:28:13 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/15 12:04:34 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,10 @@ t_opt					getopt(int ac, char **av);
 t_file					*getfile(int ac, char **av);
 t_file					*newfile(char *name);
 void					filepushback(t_file **begin, char *name);
+void					insertascii(t_file **lst, char *s);
+void					putlstfile(t_file **begin);
 void					msgerropt(char c);
 void					msgnosuch(char *name);
-void					msgerr();
+void					msgerr(void);
 
 #endif
