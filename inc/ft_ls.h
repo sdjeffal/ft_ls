@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 17:57:44 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/15 12:04:34 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/21 15:32:22 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ typedef struct			s_file
 {
 	char	*name;
 	t_stat	stat;
+	char	type;
+	char	*size;
+	char	*err;
 	struct s_file	*prev;
 	struct s_file	*next;
 }						t_file;
@@ -48,11 +51,14 @@ typedef struct			s_file
 t_opt					getopt(int ac, char **av);
 t_file					*getfile(int ac, char **av);
 t_file					*newfile(char *name);
+void					checkfile(t_file *lst);
+void					ls_default(int ac, char **av);
 void					filepushback(t_file **begin, char *name);
 void					insertascii(t_file **lst, char *s);
 void					putlstfile(t_file **begin);
+char					gettypefile(mode_t st_mode);
 void					msgerropt(char c);
-void					msgnosuch(char *name);
+void					msgerrfile(char *file);
 void					msgerr(void);
-
+void					erropen(t_file *lst);
 #endif

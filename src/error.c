@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/15 12:04:46 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/21 15:37:00 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,25 @@ void	msgerropt(char c)
 void	msgerr(void)
 {
 	perror("ft_ls");
-	strerror(errno);
 	exit(EXIT_FAILURE);
 }
 
-void	msgnosuch(char *name)
+void	msgerrfile(char *file)
 {
-	ft_putstr_fd("ft_ls: ", 2);
-	ft_putstr_fd(name, 2);
-	ft_putendl_fd(" No such file or directory", 2);
+	perror(ft_strjoin("ft_ls: ", file));
+}
+
+void	erropen(t_file *lst)
+{
+	if (errno == EACCES)
+		lst->err = ft_strdup(strerror(errno));
+	else if (errno == ENOENT)	
+		perror(ft_strjoin("ft_ls: ", lst->name));
+	else if (errno == EMFILE || errno == ENFILE || errno == ENOMEM)
+		msgerr();
+	else if (errno == ENOTDIR)
+	{
+		lstat(lst->name, &lst->stat);
+		lst->type = gettypefile(lst->stat.st_mode);
+	}
 }

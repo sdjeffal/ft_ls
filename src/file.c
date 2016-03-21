@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/15 12:01:50 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/15 12:03:11 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/18 16:23:23 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,20 +66,32 @@ void	insertascii(t_file **lst, char *s)
 		cmp = cmp->next;
 	}
 	new->next = cmp;
+	if(cmp)
+		new->next->prev = new;
 	if (tmp)
+	{
 		tmp->next = new;
+		new->prev = tmp;
+	}
 	else
 		*lst = new;
 }
 
 void	putlstfile(t_file **begin)
 {
-	t_file *tmp;
+	t_file	*tmp;
+	t_file	*end;
 
 	tmp = *begin;
 	while (tmp)
 	{
+		ft_putstr("name: ");
 		ft_putendl(tmp->name);
+		ft_putstr("type: ");
+		ft_putchar(tmp->type);
+		ft_putchar('\n');
+		ft_putstr("err: ");
+		ft_putendl(tmp->err);
 		tmp = tmp->next;
 	}
 }
