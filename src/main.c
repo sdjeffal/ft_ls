@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 18:05:16 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/21 15:39:39 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/23 15:34:13 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	checkfile(t_file *lst)
 			erropen(lst);
 		else
 		{
-			lstat(lst->name, &lst->stat);
+			ret = lstat(lst->name, &lst->stat);
 			lst->type = gettypefile(lst->stat.st_mode);
 			closedir(d);
 		}
@@ -64,17 +64,36 @@ void	checkfile(t_file *lst)
 void	ls_core(t_opt op, t_file *lst)
 {
 	checkfile(lst);
+	if (!isopt(op))
+		ft_putendl("no option");
 }
-/**
-int	isfile()
 
-int isdir()
-**/
+int	isfile(t_file *f)
+{
+	if (f)
+	{
+		if (f->type == '-')
+			return (TRUE);
+	}
+	return (FALSE);
+}
+
+int isdir(t_file *f)
+{
+	if (f)
+	{
+		if (f->type == 'd')
+			return (TRUE);
+	}
+	return (FALSE);
+
+}
+
 int	isopt(t_opt opt)
 {
-	if(opt.a && opt.l && opt.rv && opt.rc && opt.t)
-		return (1);
-	else return (0);
+	if(opt.a || opt.l || opt.rv || opt.rc || opt.t)
+		return (TRUE);
+	else return (FALSE);
 }
 
 char	gettypefile(mode_t st_mode)

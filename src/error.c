@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/21 15:37:00 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/23 12:10:06 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,18 @@ void	msgerr(void)
 	exit(EXIT_FAILURE);
 }
 
-void	msgerrfile(char *file)
+t_file	*erropen(t_file *lst)
 {
-	perror(ft_strjoin("ft_ls: ", file));
-}
-
-void	erropen(t_file *lst)
-{
+	t_file *begin;
+	
+	begin = lst;
 	if (errno == EACCES)
 		lst->err = ft_strdup(strerror(errno));
-	else if (errno == ENOENT)	
+	else if (errno == ENOENT)
+	{
 		perror(ft_strjoin("ft_ls: ", lst->name));
+		begin = delfile(&lst, lst->name);
+	}
 	else if (errno == EMFILE || errno == ENFILE || errno == ENOMEM)
 		msgerr();
 	else if (errno == ENOTDIR)
@@ -48,4 +49,5 @@ void	erropen(t_file *lst)
 		lstat(lst->name, &lst->stat);
 		lst->type = gettypefile(lst->stat.st_mode);
 	}
+	return (begin);
 }

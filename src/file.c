@@ -6,13 +6,15 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/15 12:01:50 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/18 16:23:23 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/23 12:51:49 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
-t_file	*newfile(char *name)
+static void	freefile(t_file **file);
+
+t_file		*newfile(char *name)
 {
 	t_file *new;
 
@@ -34,7 +36,7 @@ t_file	*newfile(char *name)
 	return (new);
 }
 
-void	filepushback(t_file **begin, char *name)
+void		filepushback(t_file **begin, char *name)
 {
 	t_file *tmp;
 
@@ -51,7 +53,7 @@ void	filepushback(t_file **begin, char *name)
 	}
 }
 
-void	insertascii(t_file **lst, char *s)
+void		insertascii(t_file **lst, char *s)
 {
 	t_file *tmp;
 	t_file *cmp;
@@ -66,7 +68,7 @@ void	insertascii(t_file **lst, char *s)
 		cmp = cmp->next;
 	}
 	new->next = cmp;
-	if(cmp)
+	if (cmp)
 		new->next->prev = new;
 	if (tmp)
 	{
@@ -77,21 +79,64 @@ void	insertascii(t_file **lst, char *s)
 		*lst = new;
 }
 
+t_file		*delfile(t_file **lst, char *name)
+{
+	t_file *tmp;
+	t_file *cmp;
+	t_file *begin;
+
+	cmp = NULL;
+	tmp = *lst;
+	begin = *lst;
+	while (tmp)
+	{
+		cmp = tmp;
+		tmp = tmp->next;
+		if (!ft_strcmp(cmp->name, name))
+		{
+			if (cmp->next && cmp->prev)
+			{
+				cmp->prev->next = cmp->next;
+				cmp->next->prev = cmp->prev;
+			}
+			else if (cmp->next && !cmp->prev)
+			{
+				cmp->next->prev = NULL;
+				begin = cmp->next;
+			}
+			else if (cmp->prev && !cmp->next)
+				cmp->prev->next = NULL;
+			freefile(&cmp);
+		}
+	}
+	return (*lst);
+}
+
+static void	freefile(t_file **file)
+{
+	if (*file)
+	{
+		if ((*file)->name)
+			free((*file)->name);
+		free(*file);
+		*file = NULL;
+	}
+}
+
 void	putlstfile(t_file **begin)
 {
 	t_file	*tmp;
-	t_file	*end;
 
 	tmp = *begin;
 	while (tmp)
 	{
 		ft_putstr("name: ");
 		ft_putendl(tmp->name);
-		ft_putstr("type: ");
-		ft_putchar(tmp->type);
-		ft_putchar('\n');
-		ft_putstr("err: ");
-		ft_putendl(tmp->err);
+		//ft_putstr("type: ");
+		//ft_putchar(tmp->type);
+		//ft_putchar('\n');
+		//ft_putstr("err: ");
+		//ft_putendl(tmp->err);
 		tmp = tmp->next;
 	}
 }

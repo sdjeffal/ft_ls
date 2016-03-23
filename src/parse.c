@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 07:57:31 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/11 18:57:54 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/23 12:46:33 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,11 @@ static t_file	*parsefile(t_file *lst, int ac, char **av)
 	{
 		if (av[i][0] == '-' && av[i][1] == '-')
 			b = TRUE;
-		else if ((av[i][0] != '-') || (av[i][0] == '-' && b))	
-			filepushback(&lst, av[i]);
+		else if ((av[i][0] != '-') || (av[i][0] == '-' && b))
+			insertascii(&lst, av[i]);
 	}
 	if(!lst)
-		filepushback(&lst, "./");
+		insertascii(&lst, "./");
 	return (lst);
 }
 
@@ -87,5 +87,5 @@ t_file	*getfile(int ac, char **av)
 	
 	begin = NULL;
 	begin = parsefile(begin, ac, av);
-	return (begin);	
+	return (begin);
 }

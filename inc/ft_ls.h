@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 17:57:44 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/21 15:32:22 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/23 15:34:20 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ typedef struct			s_file
 {
 	char	*name;
 	t_stat	stat;
+	char	*chmod;
+	char	*grid;
+	char	*uid;
 	char	type;
 	char	*size;
 	char	*err;
@@ -58,7 +61,11 @@ void					insertascii(t_file **lst, char *s);
 void					putlstfile(t_file **begin);
 char					gettypefile(mode_t st_mode);
 void					msgerropt(char c);
-void					msgerrfile(char *file);
 void					msgerr(void);
-void					erropen(t_file *lst);
+t_file					*erropen(t_file *lst);
+int						isfile(t_file *f);
+int						isdir(t_file *f);
+int						isopt(t_opt opt);
+t_file					*delfile(t_file **lst, char *name);
+
 #endif
