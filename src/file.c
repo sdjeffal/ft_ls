@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/15 12:01:50 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/29 16:07:36 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/05 14:42:08 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void		filepushback(t_file **begin, char *name)
 	}
 }
 
-int	getnbrfile(t_file *lst)
+int	getlenghtlst(t_file *lst)
 {
 	int i;
 	t_file *tmp;
@@ -145,6 +145,59 @@ void	delfile(t_file **lst, char *name)
 	}
 }
 
+int	getnbrfile(t_file *lst)
+{
+	t_file *tmp;
+	int i;
+
+	i = 0;
+	tmp = lst;
+	if (tmp)
+	{
+		while (tmp)
+		{
+			if(isfile(tmp))
+				i++;
+			tmp = tmp->next;
+		}
+	}
+	return (i);
+}
+
+int	getnbrdir(t_file *lst)
+{
+	t_file *tmp;
+	int i;
+
+	i = 0;
+	tmp = lst;
+	if (tmp)
+	{
+		while (tmp)
+		{
+			if(isdir(tmp) || islnk(tmp))
+				i++;
+			tmp = tmp->next;
+		}
+	}
+	return (i);
+}
+
+void	putlstfile(t_file **begin)
+{
+	t_file	*tmp;
+
+	if (*begin)
+	{
+		tmp = *begin;
+		while (tmp)
+		{
+			ft_putendl(tmp->name);
+			tmp = tmp->next;
+		}
+	}
+}
+
 void	debuglst(t_file **begin)
 {
 	t_file	*tmp;
@@ -161,20 +214,5 @@ void	debuglst(t_file **begin)
 		ft_putstr(tmp->err);
 		ft_putendl("");
 		tmp = tmp->next;
-	}
-}
-
-void	putlstfile(t_file **begin)
-{
-	t_file	*tmp;
-
-	if (*begin)
-	{
-		tmp = *begin;
-		while (tmp)
-		{
-			ft_putendl(tmp->name);
-			tmp = tmp->next;
-		}
 	}
 }

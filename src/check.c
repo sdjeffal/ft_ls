@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 12:24:15 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/01 15:45:53 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/05 12:34:19 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ int		isfile(t_file *f)
 {
 	if (f)
 	{
-		if (f->type == '-')
+		if (f->type == '-' || f->type == 'c' ||
+			f->type == 'b' || f->type == 's')
 			return (TRUE);
 	}
 	return (FALSE);
@@ -53,6 +54,16 @@ int		isdir(t_file *f)
 	if (f)
 	{
 		if (f->type == 'd')
+			return (TRUE);
+	}
+	return (FALSE);
+}
+
+int		islnk(t_file *f)
+{
+	if (f)
+	{
+		if (f->type == 'l')
 			return (TRUE);
 	}
 	return (FALSE);

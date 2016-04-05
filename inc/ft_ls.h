@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 17:57:44 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/01 11:58:05 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/05 14:36:28 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,15 @@ void					msgerropt(char c);
 void					msgerr(void);
 int						erropen(t_file *lst);
 int						isfile(t_file *f);
+int						islnk(t_file *f);
 int						isdir(t_file *f);
 int						isopt(t_opt opt);
 void					delfile(t_file **lst, char *name);
 void					ls_core(t_opt op, t_file **lst);
-void					ls_dir(t_file **lst);
+void					ls_dir(t_file **lst, t_opt op);
+int						printfile(t_file *lst);
 void					debuglst(t_file **begin);
-int						getnbrfile(t_file *lst);
+int						getlenghtlst(t_file *lst);
+int						getnbrdir(t_file *lst);
 
 #endif
