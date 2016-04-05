@@ -6,18 +6,10 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 18:05:16 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/23 15:34:13 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/01 16:17:09 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <dirent.h>
-#include <pwd.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <time.h>
-#include <errno.h>
 #include "../inc/ft_ls.h"
 
 void	ls_default(int ac, char **av)
@@ -38,62 +30,6 @@ void	ls_default(int ac, char **av)
 		closedir(dir);
 		exit(EXIT_SUCCESS);
 	}
-}
-
-void	checkfile(t_file *lst)
-{
-	DIR			*d;
-	t_dirent	*dir;
-	int ret;
-
-	ret = 0;
-	while (lst)
-	{
-		if ((d = opendir(lst->name)) == NULL)
-			erropen(lst);
-		else
-		{
-			ret = lstat(lst->name, &lst->stat);
-			lst->type = gettypefile(lst->stat.st_mode);
-			closedir(d);
-		}
-		lst = lst->next;
-	}
-}
-
-void	ls_core(t_opt op, t_file *lst)
-{
-	checkfile(lst);
-	if (!isopt(op))
-		ft_putendl("no option");
-}
-
-int	isfile(t_file *f)
-{
-	if (f)
-	{
-		if (f->type == '-')
-			return (TRUE);
-	}
-	return (FALSE);
-}
-
-int isdir(t_file *f)
-{
-	if (f)
-	{
-		if (f->type == 'd')
-			return (TRUE);
-	}
-	return (FALSE);
-
-}
-
-int	isopt(t_opt opt)
-{
-	if(opt.a || opt.l || opt.rv || opt.rc || opt.t)
-		return (TRUE);
-	else return (FALSE);
 }
 
 char	gettypefile(mode_t st_mode)
@@ -120,16 +56,17 @@ int	main(int argc, char **argv)
 {
 	t_opt option;
 	t_file *begin;
-	t_file *tmp;
 
 	begin = NULL;
 	ls_default(argc, argv);
 	option = getopt(argc, argv);
-	begin = getfile(argc, argv);
-	tmp = begin;
-	ls_core(option, begin);
-	putlstfile(&begin);
-	/**
+	getfile(&begin, argc, argv);
+	ls_core(option, &begin);
+	if(begin == NULL)
+		ft_putendl("vide");
+
+	//putlstfile(&begin);
+/**
 	ft_putstr("-a");
 	ft_putnendl(option.a);
 	ft_putstr("-l");

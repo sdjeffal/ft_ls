@@ -13,7 +13,7 @@
 NAME = ft_ls
 
 CC = clang
-CFLAG = -Wall -Werror -Wextra
+CFLAG = -Wall -Werror -Wextra -g
 
 CPATH = src/
 CFILES = \
@@ -21,6 +21,8 @@ CFILES = \
 	parse.c \
 	error.c \
 	file.c	\
+	core.c  \
+	check.c \
 
 OPATH = obj/
 OFILES = $(CFILES:.c=.o)

@@ -6,13 +6,11 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/15 12:01:50 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/23 12:51:49 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/03/29 16:07:36 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
-
-static void	freefile(t_file **file);
 
 t_file		*newfile(char *name)
 {
@@ -53,6 +51,24 @@ void		filepushback(t_file **begin, char *name)
 	}
 }
 
+int	getnbrfile(t_file *lst)
+{
+	int i;
+	t_file *tmp;
+
+	i = 0;
+	tmp = lst;
+	if(tmp)
+	{
+		while(tmp)
+		{
+			i++;
+			tmp = tmp->next;
+		}
+	}
+	return (i);
+}
+
 void		insertascii(t_file **lst, char *s)
 {
 	t_file *tmp;
@@ -79,39 +95,6 @@ void		insertascii(t_file **lst, char *s)
 		*lst = new;
 }
 
-t_file		*delfile(t_file **lst, char *name)
-{
-	t_file *tmp;
-	t_file *cmp;
-	t_file *begin;
-
-	cmp = NULL;
-	tmp = *lst;
-	begin = *lst;
-	while (tmp)
-	{
-		cmp = tmp;
-		tmp = tmp->next;
-		if (!ft_strcmp(cmp->name, name))
-		{
-			if (cmp->next && cmp->prev)
-			{
-				cmp->prev->next = cmp->next;
-				cmp->next->prev = cmp->prev;
-			}
-			else if (cmp->next && !cmp->prev)
-			{
-				cmp->next->prev = NULL;
-				begin = cmp->next;
-			}
-			else if (cmp->prev && !cmp->next)
-				cmp->prev->next = NULL;
-			freefile(&cmp);
-		}
-	}
-	return (*lst);
-}
-
 static void	freefile(t_file **file)
 {
 	if (*file)
@@ -123,7 +106,46 @@ static void	freefile(t_file **file)
 	}
 }
 
-void	putlstfile(t_file **begin)
+void	delfile(t_file **lst, char *name)
+{
+	t_file *tmp;
+	t_file *cmp;
+
+	cmp = NULL;
+	tmp = *lst;
+	while (tmp)
+	{
+		cmp = tmp;
+		tmp = tmp->next;
+		if (!ft_strcmp(cmp->name, name))
+		{
+			if(cmp->prev == NULL && cmp->next == NULL)
+			{
+				freefile(&cmp);
+				*lst = NULL;
+			}
+			else if (cmp->prev == NULL)
+			{
+				cmp->next->prev = NULL;
+				*lst = cmp->next;
+				freefile(&cmp);
+			}
+			else if (cmp->next == NULL)
+			{
+				cmp->prev->next = NULL;
+				freefile(&cmp);
+			}
+			else
+			{
+				cmp->next->prev = cmp->prev;
+				cmp->prev->next = cmp->next;
+				freefile(&cmp);
+			}
+		}
+	}
+}
+
+void	debuglst(t_file **begin)
 {
 	t_file	*tmp;
 
@@ -132,11 +154,27 @@ void	putlstfile(t_file **begin)
 	{
 		ft_putstr("name: ");
 		ft_putendl(tmp->name);
-		//ft_putstr("type: ");
-		//ft_putchar(tmp->type);
-		//ft_putchar('\n');
-		//ft_putstr("err: ");
-		//ft_putendl(tmp->err);
+		ft_putstr("type: ");
+		ft_putchar(tmp->type);
+		ft_putchar('\n');
+		ft_putstr("err: ");
+		ft_putstr(tmp->err);
+		ft_putendl("");
 		tmp = tmp->next;
+	}
+}
+
+void	putlstfile(t_file **begin)
+{
+	t_file	*tmp;
+
+	if (*begin)
+	{
+		tmp = *begin;
+		while (tmp)
+		{
+			ft_putendl(tmp->name);
+			tmp = tmp->next;
+		}
 	}
 }

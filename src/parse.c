@@ -62,7 +62,7 @@ t_opt	getopt(int ac, char **av)
 	return (op);
 }
 
-static t_file	*parsefile(t_file *lst, int ac, char **av)
+void	getfile(t_file **lst, int ac, char **av)
 {
 	int i;
 	int b;
@@ -74,18 +74,8 @@ static t_file	*parsefile(t_file *lst, int ac, char **av)
 		if (av[i][0] == '-' && av[i][1] == '-')
 			b = TRUE;
 		else if ((av[i][0] != '-') || (av[i][0] == '-' && b))
-			insertascii(&lst, av[i]);
+			insertascii(lst, av[i]);
 	}
-	if(!lst)
-		insertascii(&lst, "./");
-	return (lst);
-}
-
-t_file	*getfile(int ac, char **av)
-{
-	t_file	*begin;
-	
-	begin = NULL;
-	begin = parsefile(begin, ac, av);
-	return (begin);
+	if(!*lst)
+		insertascii(lst, "./");
 }

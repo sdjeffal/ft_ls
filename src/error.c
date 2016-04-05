@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/23 12:10:06 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/01 15:51:14 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,14 @@ void	msgerr(void)
 	exit(EXIT_FAILURE);
 }
 
-t_file	*erropen(t_file *lst)
+int	erropen(t_file *lst)
 {
-	t_file *begin;
-	
-	begin = lst;
 	if (errno == EACCES)
 		lst->err = ft_strdup(strerror(errno));
 	else if (errno == ENOENT)
 	{
 		perror(ft_strjoin("ft_ls: ", lst->name));
-		begin = delfile(&lst, lst->name);
+		return (1);
 	}
 	else if (errno == EMFILE || errno == ENFILE || errno == ENOMEM)
 		msgerr();
@@ -48,6 +45,7 @@ t_file	*erropen(t_file *lst)
 	{
 		lstat(lst->name, &lst->stat);
 		lst->type = gettypefile(lst->stat.st_mode);
+		return (0);
 	}
-	return (begin);
+	return (0);
 }
