@@ -66,6 +66,7 @@ void	getfile(t_file **lst, int ac, char **av)
 {
 	int i;
 	int b;
+	t_file *tmp;
 
 	b = FALSE;
 	i = 0;
@@ -78,4 +79,10 @@ void	getfile(t_file **lst, int ac, char **av)
 	}
 	if(!*lst)
 		insertascii(lst, "./");
+	tmp = *lst;
+	while (tmp)
+	{
+		setpath(&tmp, tmp->name);
+		tmp = tmp->next;
+	}
 }

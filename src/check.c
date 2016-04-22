@@ -6,34 +6,47 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 12:24:15 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/05 12:34:19 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/12 17:28:06 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
+int	checkdir(t_file **lst, DIR *dir, char *path)
+{
+	int ret;
+
+	if(!dir)
+	{
+		if (!erropen(*lst))
+			return (0);
+	}
+	else
+	{
+		ret = lstat((*lst)->path, &(*lst)->stat);
+		if (ret == -1)
+		{
+			if (errno == EBADF)
+				msgerr();
+		}
+		else
+			(*lst)->type = gettypefile((*lst)->stat.st_mode);
+	}
+	return (1);
+}
+
 void	checkfiles(t_file **lst)
 {
-	DIR			*d;
-	t_dirent	*dir;
-	int			ret;
+	DIR		*d;
 	t_file	*tmp;
 
-	ret = 0;
 	tmp = *lst;
 	while (tmp)
 	{
-		if ((d = opendir(tmp->name)) == NULL)
-		{
-			if (erropen(tmp))
-				delfile(lst, tmp->name);
-		}
-		else
-		{
-			ret = lstat(tmp->name, &tmp->stat);
-			tmp->type = gettypefile(tmp->stat.st_mode);
+		d = opendir(tmp->path);
+		checkdir(&tmp, d, tmp->path);
+		if (d)
 			closedir(d);
-		}
 		tmp = tmp->next;
 	}
 }

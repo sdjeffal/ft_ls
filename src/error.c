@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/05 15:47:56 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/12 17:42:30 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <errno.h>
 #include "../inc/ft_ls.h"
 
-void	msgerropt(char c)
+void			msgerropt(char c)
 {
 	ft_putstr_fd("ft_ls: illegal option -- ", 2);
 	ft_putchar_fd(c, 2);
@@ -24,28 +24,63 @@ void	msgerropt(char c)
 	exit(EXIT_FAILURE);
 }
 
-void	msgerr(void)
+void			msgerr(void)
 {
 	perror("ft_ls");
 	exit(EXIT_FAILURE);
 }
 
-int	erropen(t_file *lst)
+static t_error	*mallocerror()
 {
-	if (errno == EACCES)
-		lst->err = ft_strdup(strerror(errno));
-	else if (errno == ENOENT)
+	t_error *e;
+
+	if ((e = (t_error*)malloc(sizeof(t_error))) == NULL)
+		msgerr();
+	else
 	{
-		perror(ft_strjoin("ft_ls: ", lst->name));
+		e->str = NULL;
+		e->errn = 0;
+	}
+	return (e);
+}
+
+int				erropen(t_file *lst)
+{
+	if (errno == EACCES || errno == ENOENT)
+	{
+		lst->error = mallocerror();
+		lst->error->str = ft_strjoin("ft_ls: ", lst->name);
+		lst->error->str = ft_strjoin(lst->error->str, " ");
+		lst->error->str = ft_strjoin(lst->error->str, strerror(errno));
+		lst->error->errn = errno;
+		if (errno == EACCES)
+		{
+			lstat(lst->path, &lst->stat);
+			lst->type = gettypefile(lst->stat.st_mode);
+		}
 		return (1);
 	}
 	else if (errno == EMFILE || errno == ENFILE || errno == ENOMEM)
 		msgerr();
 	else if (errno == ENOTDIR)
 	{
-		lstat(lst->name, &lst->stat);
+		lstat(lst->path, &lst->stat);
 		lst->type = gettypefile(lst->stat.st_mode);
-		return (0);
+		return (1);
+	}
+	return (0);
+}
+
+int				errorexists(t_file *lst)
+{
+	if(lst)
+	{
+		while(lst)
+		{
+			if(lst->error)
+				return (1);
+			lst =lst->next;
+		}
 	}
 	return (0);
 }
