@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_itoa.c                                          :+:      :+:    :+:   */
+/*   ft_litoa.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdjeffal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/17 10:47:36 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 12:09:36 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/29 12:13:51 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static size_t	ft_count_digit(int n)
+static unsigned long int	ft_count_digit(long n)
 {
-	size_t		i;
+	unsigned long int	i;
 
 	i = 1;
 	while (n >= 10 || n <= -10)
@@ -25,7 +25,7 @@ static size_t	ft_count_digit(int n)
 	return (i);
 }
 
-static char		*ft_convert(char *str, int number, int length)
+static char					*ft_convert(char *str, long number, long length)
 {
 	if (number < 0)
 	{
@@ -49,10 +49,10 @@ static char		*ft_convert(char *str, int number, int length)
 	return (str);
 }
 
-char			*ft_itoa(int n)
+char						*ft_litoa(long n)
 {
-	char		*str;
-	int			ln;
+	char				*str;
+	unsigned long int	ln;
 
 	ln = ft_count_digit(n);
 	str = (n < 0) ? ft_strnew(ln + 1) : ft_strnew(ln);

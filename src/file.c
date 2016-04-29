@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/15 12:01:50 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/12 15:13:04 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/29 11:25:12 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static void	initfile(t_file **new)
 	(*new)->type = ' ';
 	(*new)->chmod = NULL;
 	(*new)->gr = NULL;
+	(*new)->tblk = NULL;
 	(*new)->pwd = NULL;
 	(*new)->size = NULL;
 	(*new)->major = NULL;

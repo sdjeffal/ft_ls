@@ -16,13 +16,18 @@ CC = clang
 CFLAG = -Wall -Werror -Wextra -g
 
 CPATH = src/
-CFILES = \
-	main.c  \
-	parse.c \
-	error.c \
-	file.c	\
-	core.c  \
-	check.c \
+CFILES =       \
+	main.c     \
+	parse.c    \
+	t_error.c  \
+	msgerror.c \
+	file.c	   \
+	core.c     \
+	check.c    \
+	insert.c   \
+	utils.c    \
+	print.c    \
+	stat.c     \
 
 OPATH = obj/
 OFILES = $(CFILES:.c=.o)

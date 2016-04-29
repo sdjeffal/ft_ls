@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                            :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/29 18:05:16 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/01 16:17:09 by sdjeffal         ###   ########.fr       */
+/*   Created: 2016/04/22 13:18:46 by sdjeffal          #+#    #+#             */
+/*   Updated: 2016/04/29 22:43:25 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	ls_default(int ac, char **av)
 {
-	DIR *dir;
-	t_file *begin;
-	t_dirent *dp;
+	t_dirent	*dp;
+	t_file		*begin;
+	DIR			*dir;
 
 	begin = NULL;
 	if (ac == 1 || (ac == 2 && !ft_strcmp(av[1], "--")))
@@ -26,7 +26,7 @@ void	ls_default(int ac, char **av)
 		while ((dp = readdir(dir)) > 0)
 		{
 			if (dp->d_name[0] != '.')
-				insertascii(&begin, dp->d_name);
+				insertascii(&begin, newfile(dp->d_name));
 		}
 		putlstfile(&begin);
 		closedir(dir);
@@ -34,29 +34,15 @@ void	ls_default(int ac, char **av)
 	}
 }
 
-int	main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
-	t_opt option;
-	t_file *begin;
+	t_file	*begin;
+	t_opt	option;
 
 	begin = NULL;
 	ls_default(argc, argv);
-	option = getopt(argc, argv);
-	getfile(&begin, argc, argv);
+	option = ft_getopt(argc, argv);
+	getfile(&begin, argc, argv, option);
 	ls_core(option, &begin);
-	if(begin == NULL)
-		ft_putendl("vide");
-	//putlstfile(&begin);
-/**
-	ft_putstr("-a");
-	ft_putnendl(option.a);
-	ft_putstr("-l");
-	ft_putnendl(option.l);
-	ft_putstr("-r");
-	ft_putnendl(option.rv);
-	ft_putstr("-R");
-	ft_putnendl(option.rc);
-	ft_putstr("-t");
-	ft_putnendl(option.t);**/
 	return (0);
 }

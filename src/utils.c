@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:08:56 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/22 13:08:58 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/29 10:43:57 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,22 @@ int	getlenghtlst(t_file *lst)
 
 void	setpath(t_file **lst, char *path)
 {
-	int last;
+	int		last;
+	char	*tmp;
 
+	tmp = (*lst)->path;
 	if ((*lst)->path)
 	{
 		last = ft_strlen((*lst)->path) - 1;
 		if ((*lst)->path[last] != '/')
+		{
 			(*lst)->path = ft_strjoin((*lst)->path, "/");
+			free(tmp);
+			tmp = (*lst)->path;
+		}
 		(*lst)->path =  ft_strjoin((*lst)->path, path);
+		if (tmp)
+			free(tmp);
 	}
 	else
 		(*lst)->path = ft_strdup(path);

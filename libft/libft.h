@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/09/14 16:27:28 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/11 19:35:44 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/22 14:48:01 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void				ft_lstdel(t_list **alst, void (*del)(void *, size_t));
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 void				ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 char				*ft_itoa(int n);
+char				*ft_litoa(long n);
 void				ft_puttabstr(char **tab);
 void				ft_arraymap(void *tab, size_t nb_elt, size_t s,\
 					void (*f)(const void*));

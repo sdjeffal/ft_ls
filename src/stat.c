@@ -6,11 +6,13 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 12:25:08 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/22 13:07:30 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/29 12:43:29 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
+#include <limits.h>
+#include <unistd.h>
 
 char		gettypefile(mode_t st_mode)
 {
@@ -67,6 +69,7 @@ static void	getusrandgrp(t_file **f)
 	{
 		(*f)->gr = getgrgid((*f)->stat.st_gid);
 		(*f)->pwd = getpwuid((*f)->stat.st_uid);
+		(*f)->size = ft_strdup(ft_itoa((*f)->stat.st_size));
 		if ((*f)->type == 'c' || (*f)->type == 'b')
 		{
 			n = (int)(((unsigned int)((*f)->stat.st_rdev) >> 24) & 0xFF);
@@ -104,18 +107,44 @@ static void	getchmod(t_file **f)
 	}
 }
 
-void		getlsttime(t_file **lst)
+static void	getlink(t_file **f)
 {
-	t_file *tmp;
+	char	*buf;
+	ssize_t ret;
 
+	buf = ft_strnew(PATH_MAX);
+	if (f && (!(*f)->error || ((*f)->error && (*f)->error->errn != ENOENT)))
+	{
+		ret = readlink((*f)->path, buf, PATH_MAX);
+		if (ret == -1)
+		{
+
+		}
+		buf[ret + 1] = '\0';
+		(*f)->link = buf;
+	}
+}
+
+char	*getlststat(t_file **lst)
+{
+	t_file	*tmp;
+	char	*tsize;
+	blkcnt_t total;
+
+	total = 0;
 	tmp = *lst;
 	while (tmp)
 	{
+		total = total + tmp->stat.st_blocks;
 		getchmod(&tmp);
 		gettime(&tmp);
 		getusrandgrp(&tmp);
-		if (tmp->sub)
-			getlsttime(&tmp->sub);
+		if(islnk(tmp))
+			getlink(&tmp);
+		if (tmp->sub != NULL)
+			tmp->tblk = getlststat(&tmp->sub);
 		tmp = tmp->next;
 	}
+	tsize = ft_itoa(total);
+	return (tsize);
 }

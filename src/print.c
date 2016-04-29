@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:09:19 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/22 13:09:22 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/29 12:12:28 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	putlstfile(t_file **begin)
 	}
 }
 
-int		printfile(t_file *lst)
+int		printfile(t_file *lst, int boolean)
 {
 	t_file	*tmp;
 	int		i;
@@ -37,8 +37,9 @@ int		printfile(t_file *lst)
 	while (tmp)
 	{
 		if (isfile(tmp))
-		{
-			ft_putendl(tmp->name);
+		{	
+			if(!boolean)
+				ft_putendl(tmp->name);
 			i++;
 		}
 		tmp = tmp->next;
@@ -55,6 +56,43 @@ void	printerror(t_file *f, int errn)
 	{
 		if (tmp->error && tmp->error->errn == errn)
 			ft_putendl(tmp->error->str);
+		tmp = tmp->next;
+	}
+}
+
+void	print_ls_dir(t_file **lst, t_opt op)
+{
+	t_file		*tmp;
+	int			nbrf;
+	int			nbrd;
+	int			nbrerr;
+	static int		i;
+
+	tmp = *lst;
+	printerror(tmp, ENOENT);
+	nbrf = printfile(tmp, i);
+	i++;
+	nbrd = getnbrdir(tmp);
+	nbrerr = errorexists(tmp);
+	if (nbrf && nbrd)
+		ft_putchar('\n');
+	while (tmp)
+	{
+		if (isdir(tmp) || islnk(tmp))
+		{
+			if (nbrf || nbrd > 1 || nbrerr > 1)
+				ft_putendl(ft_strjoin(tmp->path, ":"));
+			if (tmp->error && tmp->error->errn == EACCES)
+				ft_putendl(tmp->error->str);
+			if(tmp->sub)
+			{
+				putlstfile(&tmp->sub);
+				if(op.rc)
+					print_ls_dir(&tmp->sub, op);
+			}
+			if (getnbrdir(tmp->next) || errorexists(tmp->next))
+				ft_putchar('\n');
+		}
 		tmp = tmp->next;
 	}
 }
@@ -117,13 +155,16 @@ void	debuglst(t_file **begin)
 	tmp = *begin;
 	while (tmp)
 	{	
-		if(tmp->sub != NULL)
+		if(tmp->type == 'd')
 		{
 		ft_putendl(" -------------------------------------------------------");
 		ft_putstr("|	name: ");
 		ft_putendl(tmp->name);
 		ft_putendl(" -------------------------------------------------------");
-			debuglst(&tmp->sub);	
+		ft_putstr("total:");
+		ft_putendl(tmp->tblk);
+		if(tmp->sub)
+			debuglst(&tmp->sub);
 		}
 		tmp = tmp->next;
 	}

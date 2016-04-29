@@ -16,7 +16,7 @@ SRC =	ft_strcmp.c ft_strlen.c ft_strclen.c ft_strcpy.c ft_strnew.c\
 	ft_strchr.c ft_strrchr.c ft_strncmp.c ft_strequ.c ft_strnequ.c\
 	ft_strjoin.c ft_strnjoin.c ft_strstr.c ft_strsub.c ft_strtrim.c \
 	ft_bzero.c ft_putstr.c ft_putnbr.c ft_putlnbr.c ft_putchar.c\
-	ft_itoa.c ft_atoi.c\
+	ft_itoa.c ft_litoa.c ft_atoi.c\
 	ft_memcpy.c ft_memset.c ft_memalloc.c ft_memdel.c ft_memmove.c\
 	ft_memchr.c ft_memcmp.c ft_memccpy.c ft_putchar_fd.c ft_putendl.c\
 	ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c\
@@ -31,7 +31,7 @@ SRCOBJ = $(SRC:.c=.o)
 
 OBJDIR = obj/
 
-CFLAG = -Wall -Werror -Wextra
+CFLAG = -Wall -Werror -Wextra -g
 
 NAME = libft.a
 

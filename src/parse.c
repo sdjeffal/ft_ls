@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 07:57:31 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/03/23 12:46:33 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/04/29 19:53:11 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int	setopt(char c, t_opt *opt)
 	return (1);
 }
 
-t_opt	getopt(int ac, char **av)
+t_opt	ft_getopt(int ac, char **av)
 {
 	t_opt op;
 	int i;
@@ -62,7 +62,7 @@ t_opt	getopt(int ac, char **av)
 	return (op);
 }
 
-void	getfile(t_file **lst, int ac, char **av)
+void	getfile(t_file **lst, int ac, char **av, t_opt op)
 {
 	int i;
 	int b;
@@ -75,14 +75,16 @@ void	getfile(t_file **lst, int ac, char **av)
 		if (av[i][0] == '-' && av[i][1] == '-')
 			b = TRUE;
 		else if ((av[i][0] != '-') || (av[i][0] == '-' && b))
-			insertascii(lst, av[i]);
+		{
+			tmp = newfile(av[i]);
+			setpath(&tmp, tmp->name);
+			insert(lst, tmp, op);
+		}
 	}
-	if(!*lst)
-		insertascii(lst, "./");
-	tmp = *lst;
-	while (tmp)
+	if (!*lst)
 	{
+		tmp = newfile("./");
 		setpath(&tmp, tmp->name);
-		tmp = tmp->next;
+		insert(lst, tmp, op);
 	}
 }

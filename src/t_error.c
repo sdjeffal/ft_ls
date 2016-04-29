@@ -1,34 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   t_error.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/12 17:42:30 by sdjeffal         ###   ########.fr       */
+/*   Created: 2016/04/29 20:49:33 by sdjeffal          #+#    #+#             */
+/*   Updated: 2016/04/29 20:53:34 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
 #include "../inc/ft_ls.h"
-
-void			msgerropt(char c)
-{
-	ft_putstr_fd("ft_ls: illegal option -- ", 2);
-	ft_putchar_fd(c, 2);
-	ft_putendl_fd("\nusage: ft_ls [-alrRt] [file..]", 2);
-	exit(EXIT_FAILURE);
-}
-
-void			msgerr(void)
-{
-	perror("ft_ls");
-	exit(EXIT_FAILURE);
-}
 
 static t_error	*mallocerror()
 {
