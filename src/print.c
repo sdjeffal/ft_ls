@@ -6,166 +6,96 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:09:19 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 12:12:28 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/25 23:45:29 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
-void	putlstfile(t_file **begin)
+static int		putlstfile(t_file **begin, t_opt op)
 {
 	t_file	*tmp;
+	int		ret;
 
+	ret = 0;
 	if (*begin)
 	{
-		tmp = *begin;
+		tmp = (op.rv) ? getlast(begin) : *begin;
 		while (tmp)
 		{
 			ft_putendl(tmp->name);
-			tmp = tmp->next;
+			tmp = (op.rv) ? tmp->prev : tmp->next;
 		}
+		ret = 1;
 	}
+	return (ret);
 }
 
-int		printfile(t_file *lst, int boolean)
+static int		printfile(t_file *lst, int *boolean, t_opt op)
 {
 	t_file	*tmp;
 	int		i;
+	int		n;
 
 	i = 0;
-	tmp = lst;
-	while (tmp)
+	n = 0;
+	tmp = (op.rv) ? getlast(&lst) : lst;
+	if (!(*boolean))
 	{
-		if (isfile(tmp))
-		{	
-			if(!boolean)
+		while (tmp)
+		{
+			if (isfile(tmp))
+			{
 				ft_putendl(tmp->name);
-			i++;
+				i++;
+			}
+			tmp = (op.rv) ? tmp->prev : tmp->next;
 		}
-		tmp = tmp->next;
 	}
+	(*boolean) += 1;
 	return (i);
 }
 
-void	printerror(t_file *f, int errn)
+static void		putpath(t_file *f, int i, int nbrf, int nbrerr)
 {
-	t_file *tmp;
-
-	tmp = f;
-	while (tmp)
-	{
-		if (tmp->error && tmp->error->errn == errn)
-			ft_putendl(tmp->error->str);
-		tmp = tmp->next;
-	}
+	if ((f->type == 'l' && f->sub != NULL) ||
+		(f->type != 'l' && (i > 1 || (i == 1 && nbrf) ||
+		nbrerr || f->next)))
+		ft_putendl(f->path = ft_fstrjoin(f->path, ":", 1));
 }
 
-void	print_ls_dir(t_file **lst, t_opt op)
+static void		putdir(t_file *f, int i, int nbrf, int nbrerr)
+{
+	putpath(f, i, nbrf, nbrerr);
+	if (f->error && f->error->errn == EACCES)
+		ft_putendl(f->error->str);
+}
+
+void			print_ls_dir(t_file **lst, t_opt op)
 {
 	t_file		*tmp;
 	int			nbrf;
 	int			nbrd;
 	int			nbrerr;
-	static int		i;
+	static int	i;
 
-	tmp = *lst;
-	printerror(tmp, ENOENT);
-	nbrf = printfile(tmp, i);
-	i++;
-	nbrd = getnbrdir(tmp);
-	nbrerr = errorexists(tmp);
-	if (nbrf && nbrd)
+	nbrerr = errorexists(*lst, op);
+	nbrf = printfile(*lst, &i, op);
+	tmp = (op.rv) ? getlast(lst) : *lst;
+	nbrd = getnbrdir(tmp, op, i);
+	if ((nbrf && i < 2 && nbrd) || (nbrd && i >= 2))
 		ft_putchar('\n');
 	while (tmp)
 	{
-		if (isdir(tmp) || islnk(tmp))
+		if ((isdir(tmp) || islnk(tmp)) && (iscurandpar(tmp->name) || i < 2))
 		{
-			if (nbrf || nbrd > 1 || nbrerr > 1)
-				ft_putendl(ft_strjoin(tmp->path, ":"));
-			if (tmp->error && tmp->error->errn == EACCES)
-				ft_putendl(tmp->error->str);
-			if(tmp->sub)
-			{
-				putlstfile(&tmp->sub);
-				if(op.rc)
-					print_ls_dir(&tmp->sub, op);
-			}
-			if (getnbrdir(tmp->next) || errorexists(tmp->next))
+			putdir(tmp, i, nbrf, nbrerr);
+			nbrf = putlstfile(&tmp->sub, op);
+			if (op.rc)
+				print_ls_dir(&tmp->sub, op);
+			if ((nbrd = getnbrdir((op.rv) ? tmp->prev : tmp->next, op, i)))
 				ft_putchar('\n');
 		}
-		tmp = tmp->next;
-	}
-}
-
-void	debuglst(t_file **begin)
-{
-	t_file	*tmp;
-
-	tmp = *begin;
-	while (tmp)
-	{
-		ft_putstr("name: ");
-		ft_putendl(tmp->name);
-		ft_putstr("type: ");
-		ft_putchar(tmp->type);
-		ft_putchar('\n');
-		ft_putstr("path: ");
-		if (tmp->path)
-			ft_putstr(tmp->path);
-		ft_putchar('\n');
-		ft_putstr("chmod: ");
-		if (tmp->chmod)
-			ft_putendl(tmp->chmod);
-		ft_putstr("nlink: ");
-		if (tmp->stat.st_nlink)
-			ft_putnendl(tmp->stat.st_nlink);
-		ft_putstr("size: ");
-		if (tmp->stat.st_size)
-			ft_putnendl(tmp->stat.st_size);
-		ft_putstr("user: ");
-		if (tmp->pwd)
-			ft_putendl(tmp->pwd->pw_name);
-		ft_putstr("groupe: ");
-		if (tmp->gr)
-			ft_putendl(tmp->gr->gr_name);
-		ft_putstr("atime: ");
-		if (tmp->atime)
-			ft_putendl(tmp->atime);
-		ft_putstr("mtime: ");
-		if (tmp->mtime)
-			ft_putendl(tmp->mtime);
-		ft_putstr("ctime: ");
-		if (tmp->ctime)
-			ft_putendl(tmp->ctime);
-		ft_putstr("major: ");
-		if (tmp->type == 'c' || tmp->type == 'b')
-		{
-			if (tmp->major)
-				ft_putendl(tmp->major);
-			ft_putstr("minor: ");
-			if (tmp->minor)
-				ft_putendl(tmp->minor);
-		}
-		ft_putstr("error->str: ");
-		if (tmp->error)
-			ft_putstr(tmp->error->str);
-		ft_putendl("\n");
-		tmp = tmp->next;
-	}
-	tmp = *begin;
-	while (tmp)
-	{	
-		if(tmp->type == 'd')
-		{
-		ft_putendl(" -------------------------------------------------------");
-		ft_putstr("|	name: ");
-		ft_putendl(tmp->name);
-		ft_putendl(" -------------------------------------------------------");
-		ft_putstr("total:");
-		ft_putendl(tmp->tblk);
-		if(tmp->sub)
-			debuglst(&tmp->sub);
-		}
-		tmp = tmp->next;
+		tmp = (op.rv) ? tmp->prev : tmp->next;
 	}
 }

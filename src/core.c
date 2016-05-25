@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 12:24:51 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 20:44:07 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/25 23:58:26 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,31 +32,34 @@ static void	readdirent(DIR *dir, t_file **f, t_opt op)
 	checkfiles(&(*f)->sub);
 }
 
-void	ls_core(t_opt op, t_file **lst)
+void		ls_core(t_opt op, t_file **lst)
 {
 	if (*lst)
 	{
 		checkfiles(lst);
 		ls_dir(lst, op);
+		printerror(*lst, ENOENT);
 		if (!op.l)
 			print_ls_dir(lst, op);
 		else
+		{
 			getlststat(lst);
+			print_ls_dir_l(lst, op);
+		}
 	}
-	exit(EXIT_SUCCESS);
 }
 
-void	ls_dir(t_file **lst, t_opt op)
+void		ls_dir(t_file **lst, t_opt op)
 {
 	t_file		*tmp;
 	DIR			*dir;
-	t_dirent	*dp;
 
 	tmp = *lst;
 	while (tmp)
 	{
-		if (isdir(tmp) || islnk(tmp))
+		if (isdir(tmp) || (islnk(tmp) == 1 && op.l) || (islnk(tmp) && !op.l))
 		{
+			errno = 0;
 			dir = opendir(tmp->path);
 			if (dir)
 			{
@@ -70,19 +73,17 @@ void	ls_dir(t_file **lst, t_opt op)
 	}
 }
 
-void	ls_dir_rec(t_file **lst, t_opt op)
+void		ls_dir_rec(t_file **lst, t_opt op)
 {
 	t_file		*tmp;
 	DIR			*dir;
-	t_dirent	*dp;
 
 	tmp = *lst;
 	while (tmp)
 	{
-		if ((isdir(tmp)) && ft_strcmp(tmp->name, ".") 
-		&& ft_strcmp(tmp->name, "..") && ft_strcmp(tmp->name, "./") 
-		&& ft_strcmp(tmp->name, "../"))
+		if ((isdir(tmp)) && iscurandpar(tmp->name))
 		{
+			errno = 0;
 			dir = opendir(tmp->path);
 			if (dir)
 			{

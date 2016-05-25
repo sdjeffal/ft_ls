@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 17:57:44 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 19:50:57 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/25 23:49:35 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct			s_file
 {
 	char	*name;
 	char	*link;
+	char	*nlink;
 	char	*path;
 	char	type;
 	t_stat	stat;
@@ -60,6 +61,7 @@ typedef struct			s_file
 	char	*atime;
 	char	*mtime;
 	char	*ctime;
+	int		pad[7];
 	struct group	*gr;
 	struct passwd	*pwd;
 	struct s_error	*error;
@@ -83,28 +85,38 @@ void					filepushback(t_file **begin, char *name);
 void					insertascii(t_file **lst, t_file *new);
 void					insertmtime(t_file **lst, t_file *f);
 void					insert(t_file **lst, t_file *f, t_opt op);
-void					putlstfile(t_file **begin);
+void					freefile(t_file **file);
+void					adderror(t_file *f);
 char					gettypefile(mode_t st_mode);
+void					getnlink(t_file **f, int *pad);
+void					getsize(t_file **f, int *pad);
 void					msgerropt(char c);
 void					msgerr(void);
+t_error					*mallocerror(void);
 int						erropen(t_file *lst);
-int						errorexists(t_file *lst);
+int						errorexists(t_file *lst, t_opt op);
 int						isfile(t_file *f);
 int						islnk(t_file *f);
 int						isdir(t_file *f);
 int						isopt(t_opt opt);
+char					*display(t_file *f, int *pad);
+char					*displayfile(t_file *f, int *pad);
+char					*displaylnk(t_file *f, int *pad);
+char					*displaydevice(t_file *f, int *pad);
+int						iscurandpar(char *s);
 void					delfile(t_file **lst, char *name);
 void					ls_core(t_opt op, t_file **lst);
 void					ls_dir(t_file **lst, t_opt op);
 void					ls_dir_rec(t_file **lst, t_opt op);
-int						printfile(t_file *lst, int boolean);
 void					debuglst(t_file **begin);
 int						getlenghtlst(t_file *lst);
-int						getnbrdir(t_file *lst);
-int						checkdir(t_file **lst, DIR *dir, char *path);
+int						getnbrdir(t_file *lst, t_opt op, int t);
+int						checkdir(t_file **lst, DIR *dir);
 void					print_ls_dir(t_file **lst, t_opt op);
-void					printerror(t_file *f, int errn);
+void					print_ls_dir_l(t_file **lst, t_opt op);
+int						printerror(t_file *f, int errn);
 void					setpath(t_file **lst, char *path);
 char					*getlststat(t_file **f);
-
+void					getchmod(t_file **f);
+t_file					*getlast(t_file **begin);
 #endif

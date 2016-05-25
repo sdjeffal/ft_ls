@@ -13,7 +13,7 @@
 NAME = ft_ls
 
 CC = clang
-CFLAG = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra -g
 
 CPATH = src/
 CFILES =       \
@@ -21,13 +21,22 @@ CFILES =       \
 	parse.c    \
 	t_error.c  \
 	msgerror.c \
-	file.c	   \
+	file.c     \
 	core.c     \
 	check.c    \
 	insert.c   \
 	utils.c    \
 	print.c    \
 	stat.c     \
+	chmod.c    \
+	print_l.c  \
+	display.c  \
+	padding.c  \
+	stat2.c    \
+
+IPATH = inc/
+IFILES = ft_ls.h
+INC = $(addprefix $(IPATH), $(IFILES))
 
 OPATH = obj/
 OFILES = $(CFILES:.c=.o)
@@ -43,7 +52,7 @@ $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -Llibft -lft -o $(NAME)
 	@echo "Successful compilation!---"
 
-$(OPATH)%.o: $(CPATH)%.c
+$(OPATH)%.o: $(CPATH)%.c $(INC)
 	@mkdir -p $(OPATH)
 	$(CC) $(CFLAGS) -I inc -c -o $@ $<
 

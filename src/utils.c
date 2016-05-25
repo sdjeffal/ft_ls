@@ -6,16 +6,16 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:08:56 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 10:43:57 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/25 23:47:23 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
-int	getnbrfile(t_file *lst)
+int		getnbrfile(t_file *lst)
 {
-	t_file *tmp;
-	int i;
+	t_file	*tmp;
+	int		i;
 
 	i = 0;
 	tmp = lst;
@@ -23,7 +23,7 @@ int	getnbrfile(t_file *lst)
 	{
 		while (tmp)
 		{
-			if(isfile(tmp))
+			if (isfile(tmp))
 				i++;
 			tmp = tmp->next;
 		}
@@ -31,10 +31,10 @@ int	getnbrfile(t_file *lst)
 	return (i);
 }
 
-int	getnbrdir(t_file *lst)
+int		getnbrdir(t_file *lst, t_opt op, int t)
 {
-	t_file *tmp;
-	int i;
+	t_file	*tmp;
+	int		i;
 
 	i = 0;
 	tmp = lst;
@@ -42,24 +42,29 @@ int	getnbrdir(t_file *lst)
 	{
 		while (tmp)
 		{
-			if(isdir(tmp) || islnk(tmp))
-				i++;
-			tmp = tmp->next;
+			if (isdir(tmp) || islnk(tmp) == 1 || (!op.l && islnk(tmp)))
+			{
+				if ((tmp->type == 'l' && tmp->sub != NULL) ||
+					(tmp->type != 'l' && (iscurandpar(tmp->name) ||
+					(!iscurandpar(tmp->path) && t == 1))))
+					i++;
+			}
+			tmp = (op.rv) ? tmp->prev : tmp->next;
 		}
 	}
 	return (i);
 }
 
-int	getlenghtlst(t_file *lst)
+int		getlenghtlst(t_file *lst)
 {
-	int i;
-	t_file *tmp;
+	int		i;
+	t_file	*tmp;
 
 	i = 0;
 	tmp = lst;
-	if(tmp)
+	if (tmp)
 	{
-		while(tmp)
+		while (tmp)
 		{
 			i++;
 			tmp = tmp->next;
@@ -83,7 +88,7 @@ void	setpath(t_file **lst, char *path)
 			free(tmp);
 			tmp = (*lst)->path;
 		}
-		(*lst)->path =  ft_strjoin((*lst)->path, path);
+		(*lst)->path = ft_strjoin((*lst)->path, path);
 		if (tmp)
 			free(tmp);
 	}
@@ -91,3 +96,15 @@ void	setpath(t_file **lst, char *path)
 		(*lst)->path = ft_strdup(path);
 }
 
+int		iscurandpar(char *s)
+{
+	int	i;
+
+	i = 0;
+	if (ft_strcmp(s, ".") && ft_strcmp(s, "..")
+			&&
+		ft_strcmp(s, "./") && ft_strcmp(s, "../"))
+		return (1);
+	else
+		return (0);
+}

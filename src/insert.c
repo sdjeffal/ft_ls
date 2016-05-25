@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:09:45 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 20:39:56 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/06 09:19:50 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,36 @@ void		insertascii(t_file **lst, t_file *new)
 		*lst = new;
 }
 
-void	insertmtime(t_file **lst, t_file *f)
+static int	timecmp(struct timespec a, struct timespec b)
 {
-	t_file *tmp;
-	t_file *cmp;
-	int ret;
+	if (a.tv_sec > b.tv_sec)
+		return (1);
+	else if (a.tv_sec < b.tv_sec)
+		return (-1);
+	else if (a.tv_sec == b.tv_sec)
+	{
+		if (a.tv_nsec > b.tv_nsec)
+			return (1);
+		else if (a.tv_nsec < b.tv_nsec)
+			return (-1);
+	}
+	return (0);
+}
+
+void		insertmtime(t_file **lst, t_file *f)
+{
+	t_file	*tmp;
+	t_file	*cmp;
+	int		ret;
 
 	tmp = NULL;
 	cmp = *lst;
 	ret = lstat(f->path, &f->stat);
-	while (cmp && f->stat.st_mtime < cmp->stat.st_mtime)
+	while (cmp && timecmp(f->stat.st_mtimespec, cmp->stat.st_mtimespec) <= 0)
 	{
+		if (timecmp(f->stat.st_mtimespec, cmp->stat.st_mtimespec) == 0)
+			if (ft_strcmp(cmp->name, f->name) > 0)
+				break ;
 		tmp = cmp;
 		cmp = cmp->next;
 	}
@@ -79,7 +98,7 @@ void	insertmtime(t_file **lst, t_file *f)
 		*lst = f;
 }
 
-void	insert(t_file **lst, t_file *f, t_opt op)
+void		insert(t_file **lst, t_file *f, t_opt op)
 {
 	if (op.t)
 		insertmtime(lst, f);

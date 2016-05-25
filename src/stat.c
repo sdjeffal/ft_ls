@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 12:25:08 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 12:43:29 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/25 23:52:28 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,84 +27,63 @@ char		gettypefile(mode_t st_mode)
 	else if (S_ISCHR(st_mode))
 		return ('c');
 	else if (S_ISFIFO(st_mode))
-		return ('f');
+		return ('p');
 	else if (S_ISSOCK(st_mode))
 		return ('s');
 	else
 		return ('u');
 }
 
-static void	gettime(t_file **f)
+static void	gettime(t_file **f, int *pad)
 {
 	time_t	now;
 	char	*tmp;
 	int		month;
+	int		len;
 
 	if ((now = time(NULL)) == -1)
 		msgerr();
 	month = (now - (*f)->stat.st_mtime) / 2629800;
 	now = (now - (*f)->stat.st_mtime);
-	if (f && (!(*f)->error || ((*f)->error && (*f)->error->errn != ENOENT)))
+	(*f)->atime = ft_strsub(ctime(&(*f)->stat.st_atime), 4, 12);
+	if (month >= 6 || now < 0)
 	{
-		(*f)->atime = ft_strsub(ctime(&(*f)->stat.st_atime), 4, 12);
-		if (month >= 6 || now < 0)
-		{
-			(*f)->mtime = ft_strsub(ctime(&(*f)->stat.st_mtime), 4, 7);
-			tmp = ft_strsub(ctime(&(*f)->stat.st_mtime), 19, 5);
-			(*f)->mtime = ft_strjoin((*f)->mtime, tmp);
-			free(tmp);
-		}
+		(*f)->mtime = ft_strsub(ctime(&(*f)->stat.st_mtime), 4, 7);
+		tmp = ft_strsub(ctime(&(*f)->stat.st_mtime), 19, 5);
+		(*f)->mtime = ft_fstrjoin((*f)->mtime, tmp, 0);
+	}
+	else
+		(*f)->mtime = ft_strsub(ctime(&(*f)->stat.st_mtime), 4, 12);
+	(*f)->mtime = ft_fstrjoin((*f)->mtime, " ", 1);
+	(*f)->ctime = ft_strsub(ctime(&(*f)->stat.st_ctime), 4, 12);
+	if (pad[4] < (len = ft_strlen((*f)->mtime)))
+		pad[4] = len;
+}
+
+static void	getusrandgrp(t_file **f, int *pad)
+{
+	int	len;
+
+	(*f)->gr = getgrgid((*f)->stat.st_gid);
+	(*f)->pwd = getpwuid((*f)->stat.st_uid);
+	if ((*f)->pwd == NULL)
+	{
+		if (((*f)->pwd = (struct passwd*)malloc(sizeof(struct passwd))))
+			(*f)->pwd->pw_name = ft_itoa((*f)->stat.st_uid);
 		else
-			(*f)->mtime = ft_strsub(ctime(&(*f)->stat.st_mtime), 4, 12);
-		(*f)->ctime = ft_strsub(ctime(&(*f)->stat.st_ctime), 4, 12);
+			msgerr();
 	}
-}
-
-static void	getusrandgrp(t_file **f)
-{
-	int n;
-
-	n = 0;
-	if (f && (!(*f)->error || ((*f)->error && (*f)->error->errn != ENOENT)))
+	if ((*f)->gr == NULL)
 	{
-		(*f)->gr = getgrgid((*f)->stat.st_gid);
-		(*f)->pwd = getpwuid((*f)->stat.st_uid);
-		(*f)->size = ft_strdup(ft_itoa((*f)->stat.st_size));
-		if ((*f)->type == 'c' || (*f)->type == 'b')
-		{
-			n = (int)(((unsigned int)((*f)->stat.st_rdev) >> 24) & 0xFF);
-			(*f)->major = ft_strjoin(ft_itoa(n), ",");
-			n = (int)(((*f)->stat.st_rdev) & 0xFFFFFF);
-			(*f)->minor = ft_strdup(ft_itoa(n));
-		}
+		if (((*f)->gr = (struct group*)malloc(sizeof(struct group))))
+			(*f)->gr->gr_name = ft_itoa((*f)->stat.st_gid);
+		else
+			msgerr();
 	}
-}
-
-static void	getchmod(t_file **f)
-{
-	if (f && (!(*f)->error || ((*f)->error && (*f)->error->errn != ENOENT)))
-		(*f)->chmod = ft_strdup("---------");
-	if ((*f)->chmod)
-	{
-		if ((*f)->stat.st_mode & S_IRUSR)
-			(*f)->chmod[0] = 'r';
-		if (S_IWUSR & (*f)->stat.st_mode)
-			(*f)->chmod[1] = 'w';
-		if (S_IXUSR & (*f)->stat.st_mode)
-			(*f)->chmod[2] = 'x';
-		if (S_IRGRP & (*f)->stat.st_mode)
-			(*f)->chmod[3] = 'r';
-		if (S_IWGRP & (*f)->stat.st_mode)
-			(*f)->chmod[4] = 'w';
-		if (S_IXGRP & (*f)->stat.st_mode)
-			(*f)->chmod[5] = 'x';
-		if (S_IROTH & (*f)->stat.st_mode)
-			(*f)->chmod[6] = 'r';
-		if (S_IWOTH & (*f)->stat.st_mode)
-			(*f)->chmod[7] = 'w';
-		if (S_IXOTH & (*f)->stat.st_mode)
-			(*f)->chmod[8] = 'x';
-	}
+	if (pad[1] < (len = ft_strlen((*f)->pwd->pw_name)))
+		pad[1] = len;
+	if (pad[2] < (len = ft_strlen((*f)->gr->gr_name)))
+		pad[2] = len;
 }
 
 static void	getlink(t_file **f)
@@ -113,38 +92,40 @@ static void	getlink(t_file **f)
 	ssize_t ret;
 
 	buf = ft_strnew(PATH_MAX);
-	if (f && (!(*f)->error || ((*f)->error && (*f)->error->errn != ENOENT)))
+	ret = readlink((*f)->path, buf, PATH_MAX);
+	if (ret == -1)
 	{
-		ret = readlink((*f)->path, buf, PATH_MAX);
-		if (ret == -1)
-		{
-
-		}
-		buf[ret + 1] = '\0';
-		(*f)->link = buf;
+		ft_putendl("------------error----------");
 	}
+	buf[ret + 1] = '\0';
+	(*f)->link = buf;
 }
 
-char	*getlststat(t_file **lst)
+char		*getlststat(t_file **lst)
 {
-	t_file	*tmp;
-	char	*tsize;
-	blkcnt_t total;
+	t_file		*tmp;
+	char		*tsize;
+	blkcnt_t	total;
 
 	total = 0;
 	tmp = *lst;
 	while (tmp)
 	{
-		total = total + tmp->stat.st_blocks;
-		getchmod(&tmp);
-		gettime(&tmp);
-		getusrandgrp(&tmp);
-		if(islnk(tmp))
-			getlink(&tmp);
-		if (tmp->sub != NULL)
-			tmp->tblk = getlststat(&tmp->sub);
+		if (tmp && (!tmp->error || (tmp->error && tmp->error->errn != ENOENT)))
+		{
+			total = total + tmp->stat.st_blocks;
+			getchmod(&tmp);
+			getnlink(&tmp, (*lst)->pad);
+			gettime(&tmp, (*lst)->pad);
+			getusrandgrp(&tmp, (*lst)->pad);
+			getsize(&tmp, (*lst)->pad);
+			if (islnk(tmp))
+				getlink(&tmp);
+			if (tmp->sub != NULL)
+				tmp->tblk = getlststat(&tmp->sub);
+		}
 		tmp = tmp->next;
 	}
-	tsize = ft_itoa(total);
+	tsize = ft_fstrjoin("total ", ft_itoa(total), 2);
 	return (tsize);
 }

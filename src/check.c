@@ -6,31 +6,36 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 12:24:15 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/12 17:28:06 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/20 18:34:30 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
-int	checkdir(t_file **lst, DIR *dir, char *path)
+int		checkdir(t_file **lst, DIR *dir)
 {
-	int ret;
+	int	ret;
 
-	if(!dir)
+	ret = 0;
+	ret = lstat((*lst)->path, &(*lst)->stat);
+	if (!dir && ret == -1)
 	{
 		if (!erropen(*lst))
 			return (0);
 	}
 	else
 	{
-		ret = lstat((*lst)->path, &(*lst)->stat);
 		if (ret == -1)
 		{
 			if (errno == EBADF)
 				msgerr();
 		}
 		else
+		{
+			if (errno == EACCES)
+				adderror((*lst));
 			(*lst)->type = gettypefile((*lst)->stat.st_mode);
+		}
 	}
 	return (1);
 }
@@ -43,8 +48,9 @@ void	checkfiles(t_file **lst)
 	tmp = *lst;
 	while (tmp)
 	{
+		errno = 0;
 		d = opendir(tmp->path);
-		checkdir(&tmp, d, tmp->path);
+		checkdir(&tmp, d);
 		if (d)
 			closedir(d);
 		tmp = tmp->next;
@@ -56,7 +62,7 @@ int		isfile(t_file *f)
 	if (f)
 	{
 		if (f->type == '-' || f->type == 'c' ||
-			f->type == 'b' || f->type == 's')
+			f->type == 'b' || f->type == 's' || f->type == 'p')
 			return (TRUE);
 	}
 	return (FALSE);
@@ -76,16 +82,13 @@ int		islnk(t_file *f)
 {
 	if (f)
 	{
-		if (f->type == 'l')
-			return (TRUE);
+		if (f->type == 'l' && f->name)
+		{
+			if (f->name[ft_strlen(f->name) - 1] == '/')
+				return (1);
+			else
+				return (-1);
+		}
 	}
 	return (FALSE);
-}
-
-int		isopt(t_opt opt)
-{
-	if (opt.a || opt.l || opt.rv || opt.rc || opt.t)
-		return (TRUE);
-	else
-		return (FALSE);
 }

@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 07:57:31 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 19:53:11 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/26 00:00:14 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../inc/ft_ls.h"
 
 static t_opt	*initopt(t_opt *new)
-{	
+{
 	new->a = FALSE;
 	new->l = FALSE;
 	new->rv = FALSE;
@@ -23,7 +23,7 @@ static t_opt	*initopt(t_opt *new)
 	return (new);
 }
 
-static int	setopt(char c, t_opt *opt)
+static int		setopt(char c, t_opt *opt)
 {
 	if (c == 'a')
 		opt->a = TRUE;
@@ -35,16 +35,16 @@ static int	setopt(char c, t_opt *opt)
 		opt->rc = TRUE;
 	else if (c == 't')
 		opt->t = TRUE;
-	else 
+	else
 		msgerropt(c);
 	return (1);
 }
 
-t_opt	ft_getopt(int ac, char **av)
+t_opt			ft_getopt(int ac, char **av)
 {
-	t_opt op;
-	int i;
-	int j;
+	t_opt	op;
+	int		i;
+	int		j;
 
 	i = 0;
 	initopt(&op);
@@ -52,7 +52,7 @@ t_opt	ft_getopt(int ac, char **av)
 	{
 		j = 0;
 		if (av[i][0] == '-' && av[i][1] == '-')
-			break;
+			break ;
 		else if (av[i][j] == '-' && av[i][j + 1] != '\0')
 		{
 			while (av[i][++j] != '\0')
@@ -62,11 +62,11 @@ t_opt	ft_getopt(int ac, char **av)
 	return (op);
 }
 
-void	getfile(t_file **lst, int ac, char **av, t_opt op)
+void			getfile(t_file **lst, int ac, char **av, t_opt op)
 {
-	int i;
-	int b;
-	t_file *tmp;
+	int		i;
+	int		b;
+	t_file	*tmp;
 
 	b = FALSE;
 	i = 0;
@@ -87,4 +87,12 @@ void	getfile(t_file **lst, int ac, char **av, t_opt op)
 		setpath(&tmp, tmp->name);
 		insert(lst, tmp, op);
 	}
+}
+
+int				isopt(t_opt opt)
+{
+	if (opt.a || opt.l || opt.rv || opt.rc || opt.t)
+		return (TRUE);
+	else
+		return (FALSE);
 }

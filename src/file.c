@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/15 12:01:50 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/04/29 11:25:12 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/25 23:57:54 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 static void	initfile(t_file **new)
 {
+	int	i;
+
+	i = 7;
+	while (--i > 0)
+		(*new)->pad[i] = 0;
+	(*new)->pad[5] = 4;
+	(*new)->pad[6] = 3;
 	(*new)->name = NULL;
 	(*new)->link = NULL;
 	(*new)->path = NULL;
@@ -36,7 +43,7 @@ static void	initfile(t_file **new)
 
 t_file		*newfile(char *name)
 {
-	t_file *new;
+	t_file	*new;
 
 	if ((new = (t_file*)malloc(sizeof(t_file))) == NULL)
 		msgerr();
@@ -53,21 +60,19 @@ t_file		*newfile(char *name)
 	return (new);
 }
 
-static void	freefile(t_file **file)
+void		freefile(t_file **file)
 {
 	if (*file)
 	{
-		if ((*file)->name)
-			free((*file)->name);
 		free(*file);
 		*file = NULL;
 	}
 }
 
-void	delfile(t_file **lst, char *name)
+void		delfile(t_file **lst, char *name)
 {
-	t_file *tmp;
-	t_file *cmp;
+	t_file	*tmp;
+	t_file	*cmp;
 
 	cmp = NULL;
 	tmp = *lst;
@@ -77,7 +82,7 @@ void	delfile(t_file **lst, char *name)
 		tmp = tmp->next;
 		if (!ft_strcmp(cmp->name, name))
 		{
-			if(cmp->prev == NULL && cmp->next == NULL)
+			if (cmp->prev == NULL && cmp->next == NULL)
 			{
 				freefile(&cmp);
 				*lst = NULL;
