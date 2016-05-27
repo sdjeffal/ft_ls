@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 07:57:31 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/26 15:12:04 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 16:11:27 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ static int		setopt(char c, t_opt *opt)
 	else if (c == 'l')
 		opt->l = TRUE;
 	else if (c == 'r')
-		opt->rv = TRUE;
+	{
+		if (!opt->f)
+			opt->rv = TRUE;
+	}
 	else if (c == 'R')
 		opt->rc = TRUE;
 	else if (c == 't')
@@ -41,6 +44,7 @@ static int		setopt(char c, t_opt *opt)
 	{
 		opt->f = TRUE;
 		opt->a = TRUE;
+		opt->rv = FALSE;
 	}
 	else if (c == 'F')
 		opt->fo = TRUE;
