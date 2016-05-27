@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:09:19 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:45:29 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 15:07:46 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ static int		putlstfile(t_file **begin, t_opt op)
 		tmp = (op.rv) ? getlast(begin) : *begin;
 		while (tmp)
 		{
+			if (op.fo)
+				tmp->name = getclass(tmp->name, tmp->type, tmp->stat);
 			ft_putendl(tmp->name);
 			tmp = (op.rv) ? tmp->prev : tmp->next;
 		}
@@ -35,10 +37,8 @@ static int		printfile(t_file *lst, int *boolean, t_opt op)
 {
 	t_file	*tmp;
 	int		i;
-	int		n;
 
 	i = 0;
-	n = 0;
 	tmp = (op.rv) ? getlast(&lst) : lst;
 	if (!(*boolean))
 	{
@@ -46,6 +46,8 @@ static int		printfile(t_file *lst, int *boolean, t_opt op)
 		{
 			if (isfile(tmp))
 			{
+				if (op.fo)
+					tmp->name = getclass(tmp->name, tmp->type, tmp->stat);
 				ft_putendl(tmp->name);
 				i++;
 			}
@@ -58,20 +60,30 @@ static int		printfile(t_file *lst, int *boolean, t_opt op)
 
 static void		putpath(t_file *f, int i, int nbrf, int nbrerr)
 {
-	if ((f->type == 'l' && f->sub != NULL) ||
-		(f->type != 'l' && (i > 1 || (i == 1 && nbrf) ||
-		nbrerr || f->next)))
+	if ((f->type[0] == 'l' && f->sub != NULL) ||
+		(f->type[0] != 'l' && (i > 1 || (i == 1 && nbrf) ||
+		nbrerr || (f->next || f->prev))))
 		ft_putendl(f->path = ft_fstrjoin(f->path, ":", 1));
 }
 
-static void		putdir(t_file *f, int i, int nbrf, int nbrerr)
+static int		putdir(t_file *f, int i, int nbrf, int nbrerr)
 {
+	static int	ret;
+	int			tmp;
+
+	tmp = 0;
 	putpath(f, i, nbrf, nbrerr);
 	if (f->error && f->error->errn == EACCES)
+	{
 		ft_putendl(f->error->str);
+		tmp = 1;
+	}
+	if (ret == 0 && tmp)
+		ret = tmp;
+	return (ret);
 }
 
-void			print_ls_dir(t_file **lst, t_opt op)
+void			print_ls_dir(t_file **lst, t_opt op, int *ret)
 {
 	t_file		*tmp;
 	int			nbrf;
@@ -89,10 +101,10 @@ void			print_ls_dir(t_file **lst, t_opt op)
 	{
 		if ((isdir(tmp) || islnk(tmp)) && (iscurandpar(tmp->name) || i < 2))
 		{
-			putdir(tmp, i, nbrf, nbrerr);
+			*ret = putdir(tmp, i, nbrf, nbrerr);
 			nbrf = putlstfile(&tmp->sub, op);
 			if (op.rc)
-				print_ls_dir(&tmp->sub, op);
+				print_ls_dir(&tmp->sub, op, ret);
 			if ((nbrd = getnbrdir((op.rv) ? tmp->prev : tmp->next, op, i)))
 				ft_putchar('\n');
 		}

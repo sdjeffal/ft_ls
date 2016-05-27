@@ -6,39 +6,46 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/15 12:01:50 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:57:54 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 15:20:11 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
-static void	initfile(t_file **new)
+static void	initpad(t_file *new)
 {
 	int	i;
 
 	i = 7;
-	while (--i > 0)
-		(*new)->pad[i] = 0;
-	(*new)->pad[5] = 4;
-	(*new)->pad[6] = 3;
-	(*new)->name = NULL;
-	(*new)->link = NULL;
-	(*new)->path = NULL;
-	(*new)->type = ' ';
-	(*new)->chmod = NULL;
-	(*new)->gr = NULL;
-	(*new)->tblk = NULL;
-	(*new)->pwd = NULL;
-	(*new)->size = NULL;
-	(*new)->major = NULL;
-	(*new)->minor = NULL;
-	(*new)->atime = NULL;
-	(*new)->mtime = NULL;
-	(*new)->ctime = NULL;
-	(*new)->error = NULL;
-	(*new)->next = NULL;
-	(*new)->prev = NULL;
-	(*new)->sub = NULL;
+	while (--i >= 0)
+		new->pad[i] = 0;
+	new->pad[5] = 4;
+	new->pad[6] = 3;
+}
+
+static void	initfile(t_file *new)
+{
+	initpad(new);
+	new->name = NULL;
+	ft_bzero(new->link, PATH_MAX + 1);
+	new->path = NULL;
+	new->nlink = NULL;
+	new->type[0] = ' ';
+	new->type[1] = '\0';
+	new->chmod = NULL;
+	new->gr = NULL;
+	new->tblk = NULL;
+	new->pwd = NULL;
+	new->size = NULL;
+	new->major = NULL;
+	new->minor = NULL;
+	new->atime = NULL;
+	new->mtime = NULL;
+	new->ctime = NULL;
+	new->error = NULL;
+	new->next = NULL;
+	new->prev = NULL;
+	new->sub = NULL;
 }
 
 t_file		*newfile(char *name)
@@ -49,7 +56,7 @@ t_file		*newfile(char *name)
 		msgerr();
 	else
 	{
-		initfile(&new);
+		initfile(new);
 		if (name != NULL)
 		{
 			new->name = ft_strdup(name);
@@ -60,50 +67,21 @@ t_file		*newfile(char *name)
 	return (new);
 }
 
-void		freefile(t_file **file)
+char		*getclass(char *name, char *type, t_stat st)
 {
-	if (*file)
-	{
-		free(*file);
-		*file = NULL;
-	}
-}
+	char	sy[2];
 
-void		delfile(t_file **lst, char *name)
-{
-	t_file	*tmp;
-	t_file	*cmp;
-
-	cmp = NULL;
-	tmp = *lst;
-	while (tmp)
-	{
-		cmp = tmp;
-		tmp = tmp->next;
-		if (!ft_strcmp(cmp->name, name))
-		{
-			if (cmp->prev == NULL && cmp->next == NULL)
-			{
-				freefile(&cmp);
-				*lst = NULL;
-			}
-			else if (cmp->prev == NULL)
-			{
-				cmp->next->prev = NULL;
-				*lst = cmp->next;
-				freefile(&cmp);
-			}
-			else if (cmp->next == NULL)
-			{
-				cmp->prev->next = NULL;
-				freefile(&cmp);
-			}
-			else
-			{
-				cmp->next->prev = cmp->prev;
-				cmp->prev->next = cmp->next;
-				freefile(&cmp);
-			}
-		}
-	}
+	sy[1] = '\0';
+	if (type[0] == 'p')
+		sy[0] = '|';
+	else if (type[0] == 'l')
+		sy[0] = '@';
+	else if (type[0] == 'd')
+		sy[0] = '/';
+	else if (type[0] == '-' && ((S_IXUSR & st.st_mode) ||
+			(S_IXGRP & st.st_mode) || (S_IXOTH & st.st_mode)))
+		sy[0] = '*';
+	else
+		return (name);
+	return (name = ft_fstrjoin(name, sy, 1));
 }

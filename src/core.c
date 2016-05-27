@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 12:24:51 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:58:26 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 08:31:53 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,27 +32,37 @@ static void	readdirent(DIR *dir, t_file **f, t_opt op)
 	checkfiles(&(*f)->sub);
 }
 
-void		ls_core(t_opt op, t_file **lst)
+int			ls_core(t_opt op, t_file **lst)
 {
+	char	*tmp;
+	int		ret1;
+	int		ret2;
+
+	ret1 = 0;
+	ret2 = 0;
 	if (*lst)
 	{
 		checkfiles(lst);
 		ls_dir(lst, op);
-		printerror(*lst, ENOENT);
+		ret1 = printerror(*lst, ENOENT);
 		if (!op.l)
-			print_ls_dir(lst, op);
+			print_ls_dir(lst, op, &ret2);
 		else
 		{
-			getlststat(lst);
-			print_ls_dir_l(lst, op);
+			tmp = getlststat(lst);
+			free(tmp);
+			tmp = NULL;
+			print_ls_dir_l(lst, op, &ret2);
 		}
 	}
+	ret1 = (ret1 || ret2) ? 1 : 0;
+	return (ret1);
 }
 
 void		ls_dir(t_file **lst, t_opt op)
 {
-	t_file		*tmp;
-	DIR			*dir;
+	t_file	*tmp;
+	DIR		*dir;
 
 	tmp = *lst;
 	while (tmp)

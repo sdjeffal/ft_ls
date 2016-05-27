@@ -6,12 +6,11 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 12:25:08 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:52:28 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 10:38:12 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
-#include <limits.h>
 #include <unistd.h>
 
 char		gettypefile(mode_t st_mode)
@@ -88,17 +87,18 @@ static void	getusrandgrp(t_file **f, int *pad)
 
 static void	getlink(t_file **f)
 {
-	char	*buf;
 	ssize_t ret;
 
-	buf = ft_strnew(PATH_MAX);
-	ret = readlink((*f)->path, buf, PATH_MAX);
+	errno = 0;
+	ret = readlink((*f)->path, (*f)->link, PATH_MAX);
 	if (ret == -1)
 	{
-		ft_putendl("------------error----------");
+		if (errno == EACCES || errno == ENOENT)
+			adderror((*f));
+		else if (errno == EFAULT || errno == EINVAL || errno == ENAMETOOLONG ||
+				errno == EIO || errno == EBADF)
+			msgerr();
 	}
-	buf[ret + 1] = '\0';
-	(*f)->link = buf;
 }
 
 char		*getlststat(t_file **lst)

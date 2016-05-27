@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/29 20:49:33 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:50:26 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 09:51:56 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,17 @@ void	adderror(t_file *f)
 	f->error->errn = errno;
 }
 
+void	delerror(t_file *f)
+{
+	if (f && f->error)
+	{
+		free(f->error->str);
+		f->error->str = NULL;
+		free(f->error);
+		f->error = NULL;
+	}
+}
+
 int		erropen(t_file *lst)
 {
 	if (errno == EACCES || errno == ENOENT)
@@ -43,7 +54,7 @@ int		erropen(t_file *lst)
 		if (errno == EACCES)
 		{
 			lstat(lst->path, &lst->stat);
-			lst->type = gettypefile(lst->stat.st_mode);
+			lst->type[0] = gettypefile(lst->stat.st_mode);
 		}
 		return (1);
 	}
@@ -52,7 +63,7 @@ int		erropen(t_file *lst)
 	else if (errno == ENOTDIR)
 	{
 		lstat(lst->path, &lst->stat);
-		lst->type = gettypefile(lst->stat.st_mode);
+		lst->type[0] = gettypefile(lst->stat.st_mode);
 		return (1);
 	}
 	return (0);

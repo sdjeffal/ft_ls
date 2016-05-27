@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 16:44:17 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/18 19:18:14 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/26 13:03:33 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	msgerropt(char c)
 {
 	ft_putstr_fd("ft_ls: illegal option -- ", 2);
 	ft_putchar_fd(c, 2);
-	ft_putendl_fd("\nusage: ft_ls [-alrRt] [file..]", 2);
+	ft_putendl_fd("\nusage: ft_ls [-alrRtfF] [file..]", 2);
 	exit(EXIT_FAILURE);
 }
 

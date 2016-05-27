@@ -6,26 +6,26 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:09:45 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/06 09:19:50 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/26 15:12:59 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
-void		filepushback(t_file **begin, char *name)
+void		filepushback(t_file **begin, t_file *new)
 {
 	t_file *tmp;
 
 	tmp = NULL;
-	if (*begin == NULL)
-		*begin = newfile(name);
+	if ((*begin) == NULL)
+		*begin = new;
 	else
 	{
 		tmp = *begin;
 		while (tmp->next)
 			tmp = tmp->next;
-		tmp->next = newfile(name);
-		tmp->next->prev = tmp;
+		tmp->next = new;
+		new->prev = tmp;
 	}
 }
 
@@ -102,6 +102,8 @@ void		insert(t_file **lst, t_file *f, t_opt op)
 {
 	if (op.t)
 		insertmtime(lst, f);
+	else if (op.f)
+		filepushback(lst, f);
 	else
 		insertascii(lst, f);
 }

@@ -6,91 +6,113 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/03 11:10:14 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:16:21 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 15:07:19 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_ls.h"
 
-static void putfile_l(t_file *f, int *pad)
+static void	putfile_l(t_file *f, int *pad)
 {
-	char *s;
+	char	*s;
 
+	s = NULL;
 	if (islnk(f))
 		s = displaylnk(f, pad);
-	else if(f->type == '-' || f->type == 'd'
+	else if (f->type[0] == '-' || f->type[0] == 'd'
 			||
-			f->type == 's' || f->type == 'p')
+			f->type[0] == 's' || f->type[0] == 'p')
 		s = displayfile(f, pad);
-	else if(f->type == 'b' || f->type == 'c')
+	else if (f->type[0] == 'b' || f->type[0] == 'c')
 		s = displaydevice(f, pad);
 	ft_putendl(s);
+	free(s);
 }
 
-static void	putlstfile_l(t_file **begin)
+static void	putlstfile_l(t_file **begin, t_opt op)
 {
 	t_file	*tmp;
 
 	if (*begin)
 	{
-		tmp = *begin;
+		tmp = (op.rv) ? getlast(begin) : *begin;
 		while (tmp)
 		{
+			if (op.fo)
+				tmp->name = getclass(tmp->name, tmp->type, tmp->stat);
 			putfile_l(tmp, (*begin)->pad);
-			tmp = tmp->next;
+			tmp = (op.rv) ? tmp->prev : tmp->next;
 		}
 	}
 }
 
-static	int	printonlyfile_l(t_file *lst, int boolean)
+static	int	printonlyfile_l(t_file *lst, int *boolean, t_opt op)
 {
 	t_file	*tmp;
 	int		i;
 
 	i = 0;
-	tmp = lst;
-	while (tmp)
+	tmp = (op.rv) ? getlast(&lst) : lst;
+	if (!(*boolean))
 	{
-		if (isfile(tmp) || islnk(tmp) == -1)
-		{	
-			if(!boolean)
+		while (tmp)
+		{
+			if (isfile(tmp) || islnk(tmp) == -1)
+			{
 				putfile_l(tmp, lst->pad);
-			i++;
+				i++;
+			}
+			tmp = (op.rv) ? tmp->prev : tmp->next;
 		}
-		tmp = tmp->next;
 	}
+	(*boolean) += 1;
 	return (i);
 }
 
-void		print_ls_dir_l(t_file **lst, t_opt op)
+int			putdirl(t_file *f, int nbrf, int i, int nbrerr)
 {
-	t_file		*tmp;
+	static int	ret;
+	int			tmp;
+
+	tmp = 0;
+	if (i > 1 || (i == 1 && nbrf) || nbrerr || (f->next || f->prev))
+		ft_putendl(f->path = ft_fstrjoin(f->path, ":", 1));
+	ft_putendl(f->tblk);
+	if (f->error && f->error->errn == EACCES)
+	{
+		ft_putendl(f->error->str);
+		tmp = 1;
+	}
+	if (ret == 0 && tmp)
+		ret = tmp;
+	return (ret);
+}
+
+void		print_ls_dir_l(t_file **lst, t_opt op, int *ret)
+{
+	t_file		*tp;
 	int			nbrf;
 	int			nbrd;
 	int			nbrerr;
 	static int	i;
 
-	tmp = *lst;
-	nbrf = printonlyfile_l(tmp, i++);
-	nbrd = getnbrdir(tmp, op, i);
-	nbrerr = errorexists(tmp, op);
-	if (nbrf && nbrd)
+	nbrerr = errorexists(*lst, op);
+	nbrf = printonlyfile_l(*lst, &i, op);
+	tp = (op.rv) ? getlast(lst) : *lst;
+	nbrd = getnbrdir(tp, op, i);
+	if ((nbrf && nbrd) || (nbrd && i >= 2))
 		ft_putchar('\n');
-	while (tmp)
+	while (tp)
 	{
-		if ((isdir(tmp) || islnk(tmp) == 1) && (iscurandpar(tmp->name) || i < 2))
+		if ((isdir(tp) || islnk(tp) == 1) && (iscurandpar(tp->name) || i < 2))
 		{
-			if (nbrf || nbrd > 1 || nbrerr > 1)
-				ft_putendl(tmp->path = ft_fstrjoin(tmp->path, ":", 1));
-			ft_putendl(tmp->tblk);
-			if (tmp->error && tmp->error->errn == EACCES)
-				ft_putendl(tmp->error->str);
-			putlstfile_l(&tmp->sub);
-			if(op.rc)
-				print_ls_dir_l(&tmp->sub, op);
-			if (getnbrdir(tmp->next, op, i))
+			*ret = putdirl(tp, nbrf, i, nbrerr);
+			putlstfile_l(&tp->sub, op);
+			if (op.rc)
+				print_ls_dir_l(&tp->sub, op, ret);
+			if (getnbrdir((op.rv) ? tp->prev : tp->next, op, i))
 				ft_putchar('\n');
 		}
-		tmp = tmp->next;
+		tp = (op.rv) ? tp->prev : tp->next;
 	}
 }

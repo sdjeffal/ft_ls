@@ -33,6 +33,7 @@ CFILES =       \
 	display.c  \
 	padding.c  \
 	stat2.c    \
+	free.c     \
 
 IPATH = inc/
 IFILES = ft_ls.h

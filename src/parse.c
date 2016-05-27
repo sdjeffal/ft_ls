@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/11 07:57:31 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/26 00:00:14 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/26 15:12:04 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static t_opt	*initopt(t_opt *new)
 	new->rv = FALSE;
 	new->rc = FALSE;
 	new->t = FALSE;
+	new->f = FALSE;
+	new->fo = FALSE;
 	return (new);
 }
 
@@ -35,6 +37,13 @@ static int		setopt(char c, t_opt *opt)
 		opt->rc = TRUE;
 	else if (c == 't')
 		opt->t = TRUE;
+	else if (c == 'f')
+	{
+		opt->f = TRUE;
+		opt->a = TRUE;
+	}
+	else if (c == 'F')
+		opt->fo = TRUE;
 	else
 		msgerropt(c);
 	return (1);
@@ -91,7 +100,7 @@ void			getfile(t_file **lst, int ac, char **av, t_opt op)
 
 int				isopt(t_opt opt)
 {
-	if (opt.a || opt.l || opt.rv || opt.rc || opt.t)
+	if (opt.a || opt.l || opt.rv || opt.rc || opt.t || opt.f || opt.fo)
 		return (TRUE);
 	else
 		return (FALSE);

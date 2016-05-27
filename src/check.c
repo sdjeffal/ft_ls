@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 12:24:15 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/20 18:34:30 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/26 17:21:46 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int		checkdir(t_file **lst, DIR *dir)
 		{
 			if (errno == EACCES)
 				adderror((*lst));
-			(*lst)->type = gettypefile((*lst)->stat.st_mode);
+			(*lst)->type[0] = gettypefile((*lst)->stat.st_mode);
 		}
 	}
 	return (1);
@@ -61,8 +61,8 @@ int		isfile(t_file *f)
 {
 	if (f)
 	{
-		if (f->type == '-' || f->type == 'c' ||
-			f->type == 'b' || f->type == 's' || f->type == 'p')
+		if (f->type[0] == '-' || f->type[0] == 'c' ||
+			f->type[0] == 'b' || f->type[0] == 's' || f->type[0] == 'p')
 			return (TRUE);
 	}
 	return (FALSE);
@@ -72,7 +72,7 @@ int		isdir(t_file *f)
 {
 	if (f)
 	{
-		if (f->type == 'd')
+		if (f->type[0] == 'd')
 			return (TRUE);
 	}
 	return (FALSE);
@@ -82,7 +82,7 @@ int		islnk(t_file *f)
 {
 	if (f)
 	{
-		if (f->type == 'l' && f->name)
+		if (f->type[0] == 'l' && f->name)
 		{
 			if (f->name[ft_strlen(f->name) - 1] == '/')
 				return (1);

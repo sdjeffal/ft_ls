@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/29 17:57:44 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:49:35 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 14:41:53 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stdio.h>
 # include <time.h>
 # include <stdlib.h>
+# include <limits.h>
 # include <string.h>
 # include <errno.h>
 # include "../libft/libft.h"
@@ -43,25 +44,27 @@ typedef struct			s_opt
 	int	rv;
 	int	rc;
 	int	t;
+	int f;
+	int fo;
 }						t_opt;
 
 typedef struct			s_file
 {
-	char	*name;
-	char	*link;
-	char	*nlink;
-	char	*path;
-	char	type;
-	t_stat	stat;
-	char	*chmod;
-	char	*size;
-	char	*tblk;
-	char	*major;
-	char	*minor;
-	char	*atime;
-	char	*mtime;
-	char	*ctime;
-	int		pad[7];
+	char			*name;
+	char			link[PATH_MAX];
+	char			*nlink;
+	char			*path;
+	char			type[2];
+	t_stat			stat;
+	char			*chmod;
+	char			*size;
+	char			*tblk;
+	char			*major;
+	char			*minor;
+	char			*atime;
+	char			*mtime;
+	char			*ctime;
+	int				pad[7];
 	struct group	*gr;
 	struct passwd	*pwd;
 	struct s_error	*error;
@@ -72,8 +75,8 @@ typedef struct			s_file
 
 typedef struct			s_error
 {
-	char *str;
-	int errn;
+	char	*str;
+	int		errn;
 }						t_error;
 
 t_opt					ft_getopt(int ac, char **av);
@@ -81,15 +84,17 @@ void					getfile(t_file **lst, int ac, char **av, t_opt op);
 t_file					*newfile(char *name);
 void					checkfiles(t_file **lst);
 void					ls_default(int ac, char **av);
-void					filepushback(t_file **begin, char *name);
+void					filepushback(t_file **begin, t_file *new);
 void					insertascii(t_file **lst, t_file *new);
 void					insertmtime(t_file **lst, t_file *f);
 void					insert(t_file **lst, t_file *f, t_opt op);
-void					freefile(t_file **file);
+void					freefile(t_file *file);
+void					delerror(t_file *file);
 void					adderror(t_file *f);
 char					gettypefile(mode_t st_mode);
 void					getnlink(t_file **f, int *pad);
 void					getsize(t_file **f, int *pad);
+char					*getclass(char *name, char *type, t_stat st);
 void					msgerropt(char c);
 void					msgerr(void);
 t_error					*mallocerror(void);
@@ -105,15 +110,15 @@ char					*displaylnk(t_file *f, int *pad);
 char					*displaydevice(t_file *f, int *pad);
 int						iscurandpar(char *s);
 void					delfile(t_file **lst, char *name);
-void					ls_core(t_opt op, t_file **lst);
+int						ls_core(t_opt op, t_file **lst);
 void					ls_dir(t_file **lst, t_opt op);
 void					ls_dir_rec(t_file **lst, t_opt op);
 void					debuglst(t_file **begin);
 int						getlenghtlst(t_file *lst);
 int						getnbrdir(t_file *lst, t_opt op, int t);
 int						checkdir(t_file **lst, DIR *dir);
-void					print_ls_dir(t_file **lst, t_opt op);
-void					print_ls_dir_l(t_file **lst, t_opt op);
+void					print_ls_dir(t_file **lst, t_opt op, int *ret);
+void					print_ls_dir_l(t_file **lst, t_opt op, int *ret);
 int						printerror(t_file *f, int errn);
 void					setpath(t_file **lst, char *path);
 char					*getlststat(t_file **f);

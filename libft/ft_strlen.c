@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/09/10 13:40:19 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/06 21:06:38 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 09:07:53 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t i;
 
 	i = 0;
-	if (s)
-	{
-		while (s[i] != '\0')
-		{
-			i++;
-		}
-	}
+	while (s[i] != '\0')
+		i++;
 	return (i);
 }

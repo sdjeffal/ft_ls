@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/22 13:08:56 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:47:23 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/26 17:22:05 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ int		getnbrdir(t_file *lst, t_opt op, int t)
 		{
 			if (isdir(tmp) || islnk(tmp) == 1 || (!op.l && islnk(tmp)))
 			{
-				if ((tmp->type == 'l' && tmp->sub != NULL) ||
-					(tmp->type != 'l' && (iscurandpar(tmp->name) ||
+				if ((tmp->type[0] == 'l' && tmp->sub != NULL) ||
+					(tmp->type[0] != 'l' && (iscurandpar(tmp->name) ||
 					(!iscurandpar(tmp->path) && t == 1))))
 					i++;
 			}

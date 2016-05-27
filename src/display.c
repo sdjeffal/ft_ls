@@ -6,7 +6,7 @@
 /*   By: sdjeffal <sdjeffal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/06 19:57:27 by sdjeffal          #+#    #+#             */
-/*   Updated: 2016/05/25 23:55:18 by sdjeffal         ###   ########.fr       */
+/*   Updated: 2016/05/27 15:05:10 by sdjeffal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ char		*display(t_file *f, int *pad)
 {
 	char	*s;
 
-	s = ft_strjoin(&f->type, f->chmod);
+	s = ft_strjoin(f->type, f->chmod);
 	s = ft_fstrjoin(s, do_pad(f->nlink, pad[0]), 0);
-	s = ft_fstrjoin(s, f->nlink, 0);
+	s = ft_fstrjoin(s, f->nlink, 1);
 	s = ft_fstrjoin(s, " ", 1);
 	if (f->pwd == NULL)
 		s = ft_fstrjoin(s, ft_itoa(f->stat.st_uid), 0);
@@ -53,7 +53,7 @@ char		*displayfile(t_file *f, int *pad)
 
 	s = display(f, pad);
 	s = ft_fstrjoin(s, do_pad(f->size, pad[3]), 0);
-	s = ft_fstrjoin(s, f->size, 0);
+	s = ft_fstrjoin(s, f->size, 1);
 	s = ft_fstrjoin(s, " ", 1);
 	s = ft_fstrjoin(s, f->mtime, 1);
 	s = ft_fstrjoin(s, f->name, 1);
@@ -65,8 +65,10 @@ char		*displaylnk(t_file *f, int *pad)
 	char	*s;
 	char	*tmp;
 
+	tmp = NULL;
+	s = NULL;
 	s = displayfile(f, pad);
-	tmp = ft_fstrjoin(" -> ", f->link, 2);
+	tmp = ft_strjoin(" -> ", f->link);
 	s = ft_fstrjoin(s, tmp, 0);
 	return (s);
 }
@@ -84,9 +86,9 @@ char		*displaydevice(t_file *f, int *pad)
 	tmp = NULL;
 	s = display(f, pad);
 	s = ft_fstrjoin(s, do_pad(f->major, pad[5]), 0);
-	s = ft_fstrjoin(s, f->major, 0);
+	s = ft_fstrjoin(s, f->major, 1);
 	s = ft_fstrjoin(s, esp, 0);
-	s = ft_fstrjoin(s, f->minor, 0);
+	s = ft_fstrjoin(s, f->minor, 1);
 	s = ft_fstrjoin(s, " ", 1);
 	s = ft_fstrjoin(s, f->mtime, 1);
 	s = ft_fstrjoin(s, f->name, 1);
