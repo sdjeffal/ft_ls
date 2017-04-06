@@ -20,3 +20,5 @@ make
 * -l      List in long format.
 * -r      Reverse the order of the sort to get reverse lexicographical order or the oldest entries first.
 * -R      Recursively list subdirectories encountered.
+* -t      Sort by time modified (most recently modified first) before sorting
+             the operands by lexicographical order.
