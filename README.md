@@ -14,11 +14,9 @@ make
 
 ## Options
 
-*-a      Include directory entries whose names begin with a dot (.).
-*-f      Output is not sorted.  This option turns on the -a option.
-*-l      List in long format.
-*-r      Reverse the order of the sort to get reverse lexicographical order or the oldest entries first.
-*-R      Recursively list subdirectories encountered.
-*-F      Display a slash ("/") immediately after each pathname that is a directory, an asterisk ("*") after each that is
-        executable, an at sign (`@') after each symbolic link, an equals sign (`=') after each socket, a percent sign (`%')
-        after each whiteout, and a vertical bar (`|') after each that is a FIFO.
+* -a      Include directory entries whose names begin with a dot (.).
+* -f      Output is not sorted.  This option turns on the -a option.
+* -l      List in long format.
+* -r      Reverse the order of the sort to get reverse lexicographical order or the oldest entries first.
+* -R      Recursively list subdirectories encountered.
+* -F      Display a slash ("/") immediately after each pathname that is a directory, an asterisk ("*") after each that is               executable, an at sign ("@") after each symbolic link, an equals sign ("=") after each socket, a percent sign ("%")           after each whiteout, and a vertical bar (`|') after each that is a FIFO.
