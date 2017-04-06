@@ -7,7 +7,7 @@ Pour tout connaitre du filesystem, de la façon dont sont rangés les fichiers e
 make
 ```
 
-## Running
+## Executing
 ```
 ./ft_ls [-alrRtfF][file ...]
 ```
